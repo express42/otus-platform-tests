@@ -19,16 +19,7 @@ git clone -b $GROUP --single-branch $REPO
 
 if [ -f $HOMEWORK_RUN ]; then
 	echo "Run tests"
-	# Prepare network & run container
-	docker network create hw-test-net
-	docker run -d -v $(pwd):/srv -v /var/run/docker.sock:/tmp/docker.sock \
-		-e DOCKER_HOST=unix:///tmp/docker.sock --cap-add=NET_ADMIN -p 33433:22 --privileged \
-		--device /dev/net/tun --name hw-test --network hw-test-net $DOCKER_IMAGE
-	# Show versions & run tests
-	docker exec hw-test bash -c 'echo -=Get versions=-; docker version; docker-compose --version'
-	docker exec -e USER=appuser -e BRANCH=$BRANCH hw-test $HOMEWORK_RUN
-
-	# ssh -i id_rsa_test -p 33433 root@localhost "cd /srv && BRANCH=$BRANCH $HOMEWORK_RUN"
+	/bin/bash $HOMEWORK_RUN
 else
 	echo "We don't have tests for this homework"
 	exit 0
