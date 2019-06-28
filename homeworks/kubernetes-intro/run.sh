@@ -24,6 +24,12 @@ kind load docker-image web:homework-1
 
 # Create pod from students manifest
 kubectl set image web=web:homework-1 --local -f kubernetes-intro/web-pod.yaml -o yaml | kubectl apply -f -
+
+# Debug
+kubectl describe pod web
+docker exec kind-control-plane ctr --namespace k8s.io images list
+
+# Wait while pod is running
 kubectl wait --for=condition=Ready pod/web --timeout=30s
 
 # Forward 8000 port to host, check availability
