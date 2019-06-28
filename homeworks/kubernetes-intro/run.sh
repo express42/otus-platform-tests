@@ -12,7 +12,22 @@ curl -Lo kind https://github.com/kubernetes-sigs/kind/releases/download/v0.3.0/k
 chmod +x kind 
 sudo mv kind /usr/local/bin/
 
+# Create kind cluster
 kind create cluster
 export KUBECONFIG="$(kind get kubeconfig-path)"
 
-kubectl version
+# Build docker image from students Dockerfile
+docker build kubernetes-intro/web/ -t web:homework-1
+
+# Move docker image to kine node
+kind load docker-image web:homework-1
+
+# Create pod from students manifest
+kubectl apply -f kubernetes-intro/web-pod.yaml
+
+# Change image in pod to previously builded
+kubectl set image pod/web web=web:homework-1
+
+# Forward 8000 port to host, check availability
+kubectl port-forward pod/web 8000:8000
+curl -sSf localhost:8000 -o /dev/null
