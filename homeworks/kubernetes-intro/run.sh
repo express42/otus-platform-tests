@@ -15,22 +15,8 @@ sudo mv kind /usr/local/bin/
 kind create cluster
 export KUBECONFIG="$(kind get kubeconfig-path)"
 
-# Build docker image from students Dockerfile
-docker build kubernetes-intro/web/ -t web:homework-1
+# Create pod from students with probes added
+kubectl patch --local -f kubernetes-intro/web-pod.yaml -p '{"spec":{"containers":[{"name":"web","readinessProbe":{"httpGet":{"path":"/index.html", "port":8000}}}]}}' -o yaml | kubectl apply -f -
 
-# Move docker image to kine node
-kind load docker-image web:homework-1
-
-# Create pod from students manifest
-kubectl set image web=web:homework-1 --local -f kubernetes-intro/web-pod.yaml -o yaml | kubectl apply -f -
-
-# Debug
-kubectl describe pod web
-docker exec kind-control-plane ctr --namespace k8s.io images list
-
-# Wait while pod is running
+# Wait while pod will ready
 kubectl wait --for=condition=Ready pod/web --timeout=120s
-
-# Forward 8000 port to host, check availability
-kubectl port-forward pod/web 8000:8000 &
-curl -sSf --retry 5 --retry-connrefused localhost:8000 -o /dev/null
