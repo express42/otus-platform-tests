@@ -30,7 +30,7 @@ kubectl describe pod web
 docker exec kind-control-plane ctr --namespace k8s.io images list
 
 # Wait while pod is running
-kubectl wait --for=condition=Ready pod/web --timeout=30s
+kubectl wait --for=condition=Ready pod/web --timeout=120s
 
 # Forward 8000 port to host, check availability
 kubectl port-forward pod/web 8000:8000
