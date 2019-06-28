@@ -23,10 +23,8 @@ docker build kubernetes-intro/web/ -t web:homework-1
 kind load docker-image web:homework-1
 
 # Create pod from students manifest
-kubectl apply -f kubernetes-intro/web-pod.yaml
-
-# Change image in pod to previously builded
-kubectl set image pod/web web=web:homework-1
+kubectl set image web=web:homework-1 --local -f web-pod.yaml -o yaml | kubectl apply -f -
+kubectl wait --for=condition=Ready pod/web --timeout=30s
 
 # Forward 8000 port to host, check availability
 kubectl port-forward pod/web 8000:8000
