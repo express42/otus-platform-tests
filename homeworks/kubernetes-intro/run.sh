@@ -33,4 +33,4 @@ kubectl wait --for=condition=Ready pod/web --timeout=120s
 
 # Forward 8000 port to host, check availability
 kubectl port-forward pod/web 8000:8000 &
-curl -sSf localhost:8000 -o /dev/null
+curl -sSf --retry 5 --retry-connrefused localhost:8000 -o /dev/null
