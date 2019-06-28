@@ -22,4 +22,4 @@ kubectl wait --for=condition=Ready node/kind-control-plane --timeout=300s
 kubectl patch --local -f kubernetes-intro/web-pod.yaml -p '{"spec":{"containers":[{"name":"web","readinessProbe":{"httpGet":{"path":"/index.html", "port":8000}}}]}}' -o yaml | kubectl apply -f -
 
 # Wait while pod will ready
-kubectl wait --for=condition=Ready pod/web --timeout=120s
+kubectl wait --for=condition=Ready pod/web --timeout=300s
