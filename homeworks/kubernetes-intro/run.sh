@@ -15,6 +15,9 @@ sudo mv kind /usr/local/bin/
 kind create cluster --wait 300s
 export KUBECONFIG="$(kind get kubeconfig-path)"
 
+# Wait while all components in kube-system namespace will start
+kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
+
 # Create pod from students with probes added
 kubectl patch --local -f kubernetes-intro/web-pod.yaml -p '{"spec":{"containers":[{"name":"web","readinessProbe":{"httpGet":{"path":"/index.html", "port":8000}}}]}}' -o yaml | kubectl apply -f -
 
