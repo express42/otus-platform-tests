@@ -25,6 +25,6 @@ kubectl patch --local -f kubernetes-intro/web-pod.yaml -p '{"spec":{"containers"
 kubectl wait --for=condition=Ready pod/web --timeout=300s
 
 # Manual approve
-echo "All tests passed. Proceed with manual approve" 
-exit 1
+# echo "All tests passed. Proceed with manual approve" 
+# exit 1
 
