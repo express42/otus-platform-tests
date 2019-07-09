@@ -21,6 +21,6 @@ if [ -f $HOMEWORK_RUN ]; then
 	echo "Run tests"
 	/bin/bash $HOMEWORK_RUN
 else
-	echo "We don't have tests for this homework"
-	exit 0
+	echo "We don't have tests for this homework. Please check branch naming"
+	exit 1
 fi
