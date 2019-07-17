@@ -15,18 +15,76 @@ sudo mv kind /usr/local/bin/
 kind create cluster --wait 300s
 export KUBECONFIG="$(kind get kubeconfig-path)"
 
+# We have three tasks, each one in its own directory
+
+# task01
+kubectl apply -f kubernetes-security/task01/ && sleep 10
+
+# bob should have access to deployments
+kubectl auth can-i get deployments --as system:serviceaccount:default:bob || exit 1
+
+# dave should not have access to cluster
+kubectl auth can-i get pods --as system:serviceaccount:default:dave && exit 1
+
+# task02
+kubectl apply -f kubernetes-security/task02/ && sleep 10
+
+# carol should not have deployments permissions in default namespace
+kubectl auth can-i get deployments --as system:serviceaccount:prometheus:carol && exit 2
+
+# but should be able to list pods in prometheus namespace
+kubectl auth can-i list pods --as system:serviceaccount:prometheus:carol -n prometheus || exit 2
+
+# and should be able to list pods in default namespace
+kubectl auth can-i list pods --as system:serviceaccount:prometheus:carol || exit 2
+
+# now we create cindy
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cindy
+  namespace: prometheus
+EOF
+
+# but should be able to list pods in prometheus namespace
+kubectl auth can-i list pods --as system:serviceaccount:prometheus:cindy -n prometheus || exit 2
+
+# and should be able to list pods in default namespace
+kubectl auth can-i list pods --as system:serviceaccount:prometheus:cindy || exit 2
+
+# now we create dan
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dan
+EOF
+
+# but should not be able to list pods in prometheus namespace
+kubectl auth can-i list pods --as system:serviceaccount:default:dan -n prometheus && exit 2
+
+# and should not be able to list pods in default namespace
+kubectl auth can-i list pods --as system:serviceaccount:default:dan && exit 2
 
 
+# task03
+kubectl apply -f kubernetes-security/task03/ && sleep 10
 
+# jane should not have deployments permissions in default namespace
+kubectl auth can-i get deployments --as system:serviceaccount:dev:jane && exit 3
 
-# Wait while all components in kube-system namespace will start
-kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
+# but should be able to create deployments in dev namespace
+kubectl auth can-i create deployments --as system:serviceaccount:dev:jane -n dev || exit 3
 
-# Create pod from students with probes added
-kubectl patch --local -f kubernetes-intro/web-pod.yaml -p '{"spec":{"containers":[{"name":"web","readinessProbe":{"httpGet":{"path":"/index.html", "port":8000}}}]}}' -o yaml | kubectl apply -f -
+# ken should not have get deployments permissions in default namespace
+kubectl auth can-i get deployments --as system:serviceaccount:dev:ken && exit 3
 
-# Wait while pod will ready
-kubectl wait --for=condition=Ready pod/web --timeout=300s
+# but should be able to get deployments in dev namespace
+kubectl auth can-i get deployments --as system:serviceaccount:dev:ken -n dev || exit 3
+
+# and should not be able to create deployments in dev namespace
+kubectl auth can-i create deployments --as system:serviceaccount:dev:ken -n dev && exit 3
 
 # Manual approve
 # echo "All tests passed. Proceed with manual approve" 
