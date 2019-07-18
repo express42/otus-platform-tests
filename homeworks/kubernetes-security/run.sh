@@ -86,6 +86,8 @@ kubectl auth can-i get deployments --as system:serviceaccount:dev:ken -n dev || 
 # and should not be able to create deployments in dev namespace
 kubectl auth can-i create deployments --as system:serviceaccount:dev:ken -n dev && exit 3
 
+exit 0
+
 # Manual approve
 # echo "All tests passed. Proceed with manual approve" 
 # exit 1
