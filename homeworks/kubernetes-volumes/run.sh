@@ -19,7 +19,7 @@ export KUBECONFIG="$(kind get kubeconfig-path)"
 kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
 
 # Create pod from students with probes added
-kubectl apply -f kubernetes-volumes/*
+kubectl apply -f kubernetes-volumes/
 
 # Wait while pod will ready
 kubectl wait --for=condition=Ready pod/minio-0 --timeout=300s
