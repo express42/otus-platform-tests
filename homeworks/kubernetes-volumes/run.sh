@@ -24,6 +24,9 @@ kubectl apply -f kubernetes-volumes/
 # Wait while pod will ready
 kubectl wait --for=condition=Ready pod/minio-0 --timeout=300s
 
+# Wait while MinIO will ready
+sleep 10
+
 # Connect to Minio and upload file
 kubectl run -i --tty --rm debug --image=otusplatform/test-minio --restart=Never
 
