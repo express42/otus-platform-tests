@@ -1,21 +1,8 @@
-import kubetest.plugin as kbp
 import pytest
 
 """
 Fixture definitions. Common fixtures, such as toolbox pod are in conftest.py
 """
-
-
-@pytest.fixture(scope="module")
-def web_deploy(request, kube_module):
-    # wait for the manifests loaded by the 'applymanifests' marker
-    # to be ready on the cluster
-    dm = kube_module.load_deployment("./kubernetes-networks/web-deploy.yaml")
-    dm.create()
-    kube_module.wait_for_registered(timeout=30)
-    deployments = kube_module.get_deployments()
-    d = deployments.get("web")
-    yield d
 
 
 @pytest.fixture(scope="module")
@@ -26,17 +13,6 @@ def web_service_cip(request, kube_module):
     kube_module.wait_for_registered(timeout=30)
     services = kube_module.get_services()
     s = services.get("web-svc-cip")
-    yield s
-
-
-@pytest.fixture(scope="module")
-def web_service_headless(request, kube_module):
-    # Wait for Service to be ready on the cluster
-    sm = kube_module.load_service("./kubernetes-networks/web-svc-headless.yaml")
-    sm.create()
-    kube_module.wait_for_registered(timeout=30)
-    services = kube_module.get_services()
-    s = services.get("web-svc")
     yield s
 
 
@@ -126,29 +102,3 @@ def test_service_cip_connection(web_service_cip, test_pod):
             web_service_cip.obj.spec.cluster_ip, web_service_cip.obj.spec.ports[0].port
         )
     )
-
-
-@pytest.mark.it("Verify Headless service configuration")
-def test_service_headless(web_service_headless):
-    assert (
-        web_service_headless.is_ready() is True
-    ), "Service is not ready (endpoints failing)"
-
-    assert web_service_headless.obj.spec.type == "ClusterIP"
-    assert web_service_headless.obj.spec.cluster_ip == "None"
-    assert web_service_headless.obj.spec.ports[0].port == 80
-
-
-@pytest.mark.it("wev-svc-headless Service should have 3 healthy endpoints")
-def test_headless_service_endpoints(web_service_headless):
-    ep = web_service_headless.get_endpoints()
-    assert len(ep[0].subsets[0].addresses) == 3
-
-
-def teardown_module():
-    """
-    This really hacky and weird way of cleaning up test namespaces
-    It should be fixed with patching kubetest code, but I still haven't
-    found, where things gone wrong.
-    """
-    kbp.pytest_keyboard_interrupt()

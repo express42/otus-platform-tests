@@ -1,6 +1,12 @@
+import kubetest.plugin as kbp
 import pytest
-import testinfra
 import subprocess
+import testinfra
+
+
+"""
+Reusable fixtures are defined there, plus everything you'd like to do with pytest
+"""
 
 
 @pytest.fixture(scope="function")
@@ -37,3 +43,22 @@ def test_pod(request, kube_module):
         "kubectl://{pod}?namespace={ns}".format(ns=p.namespace, pod=p.name)
     )
     p.delete(options=None)
+
+
+@pytest.fixture(scope="module")
+def web_deploy(request, kube_module):
+    # wait for the manifests loaded by the 'applymanifests' marker
+    # to be ready on the cluster
+    dm = kube_module.load_deployment("./kubernetes-networks/web-deploy.yaml")
+    dm.create()
+    kube_module.wait_for_registered(timeout=30)
+    deployments = kube_module.get_deployments()
+    d = deployments.get("web")
+    d.wait_until_ready(timeout=60)
+    yield d
+    """
+    This really hacky and weird way of cleaning up test namespaces
+    It should be fixed with patching kubetest code, but I still haven't
+    found, where things gone wrong.
+    """
+    kbp.pytest_keyboard_interrupt()
