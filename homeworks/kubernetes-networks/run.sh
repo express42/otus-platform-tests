@@ -25,7 +25,7 @@ pytest_bootstrap() {
     python3 -m venv /tmp/pytest && \
     source /tmp/pytest/bin/activate
 
-    sudo -H pip3 install -U pip setuptools
+    pip3 install -q -U pip setuptools
 
     # Setup Pytest environment
     cp -fr ./otus-platform-tests/homeworks/kubernetes-networks/* ./
