@@ -12,8 +12,13 @@ download(){
     # Download kind
     curl -L -o /tmp/kind https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VER}/kind-linux-amd64
     sudo install /tmp/kind /usr/local/bin/
+}
 
+pytest_bootstrap() {
     # Install Py3 Venv module
+    sudo apt-get -q -y install software-properties-common
+    sudo apt-add-repository universe
+    sudo apt-get update
     sudo apt-get -q -y install python3-venv
 
     # Create and activate venv for PyTest
@@ -44,6 +49,7 @@ finalize() {
 
 echo "Downloading and bootstrapping dependencies..."
 download
+pytest_bootstrap
 echo "Preparing test cluster..."
 prepare
 echo "Running tests..."
