@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+  labels:
+    app: toolbox
+spec:
+  containers:
+  - name: testbox
+    image: alpine:3.9
+    command: 
+      - nmeter
+      - "-d5000"
+      - "%0t | MEM: %[mt] FREE:%[mf] | PROC:%[pn] | CPU: %[c]"
