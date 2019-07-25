@@ -26,7 +26,7 @@ pytest_bootstrap() {
     source /tmp/pytest/bin/activate
 
     # Setup Pytest environment
-    cp -fr ./otus-platform-tests/homeworks/$BRANCH/* ./
+    cp -fr "./otus-platform-tests/homeworks/${BRANCH}/*" ./
     pip3 install -r requirements.txt
 }
 
