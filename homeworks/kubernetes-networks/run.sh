@@ -18,7 +18,7 @@ pytest_bootstrap() {
     # Install Py3 Venv module
     sudo apt-get -q -y install software-properties-common
     sudo apt-add-repository universe
-    sudo apt-get -q update
+    sudo apt-get -qq update
     sudo apt-get -q -y install python3-venv
 
     # Create and activate venv for PyTest
@@ -34,7 +34,7 @@ pytest_bootstrap() {
 
 prepare() {
     # Create kind cluster
-    # kind create cluster --wait 300s
+    kind create cluster --wait 300s
     export KUBECONFIG="$(kind get kubeconfig-path)"
     # Wait while all components in kube-system namespace will start
     kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
