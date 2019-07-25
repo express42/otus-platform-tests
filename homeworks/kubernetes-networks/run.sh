@@ -13,6 +13,9 @@ download(){
     curl -L -o /tmp/kind https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VER}/kind-linux-amd64
     sudo install /tmp/kind /usr/local/bin/
 
+    # Install Py3 Venv module
+    sudo apt-get -q -y install python3-venv
+
     # Create and activate venv for PyTest
     python3 -m venv /tmp/pytest && \
     source /tmp/pytest/bin/activate
