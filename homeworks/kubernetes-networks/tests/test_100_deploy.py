@@ -1,4 +1,5 @@
 import pytest
+import kubetest.objects
 
 """
 Fixture definitions. Common fixtures, such as toolbox pod are in conftest.py
@@ -6,7 +7,7 @@ Fixture definitions. Common fixtures, such as toolbox pod are in conftest.py
 
 
 @pytest.fixture(scope="module")
-def web_service_cip(request, kube_module):
+def web_service_cip(kube_module) -> kubetest.objects.Service:
     # Wait for Service to be ready on the cluster
     sm = kube_module.load_service("./kubernetes-networks/web-svc-cip.yaml")
     sm.create()
@@ -14,6 +15,8 @@ def web_service_cip(request, kube_module):
     services = kube_module.get_services()
     s = services.get("web-svc-cip")
     yield s
+    s.delete(options=None)
+    s.wait_until_deleted()
 
 
 @pytest.fixture
