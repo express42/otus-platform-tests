@@ -1,4 +1,5 @@
 import pytest
+import kubetest.objects
 
 """
 Fixture definitions. Common fixtures, such as toolbox pod are in conftest.py
@@ -6,15 +7,17 @@ Fixture definitions. Common fixtures, such as toolbox pod are in conftest.py
 
 
 @pytest.fixture(scope="module")
-def web_service_headless(request, kube_module):
+def web_service_headless(kube_module, web_deploy) -> kubetest.objects.Service:
     # Wait for Service to be ready on the cluster
     sm = kube_module.load_service("./kubernetes-networks/web-svc-headless.yaml")
     sm.create()
-    kube_module.wait_for_registered(timeout=30)
+    kube_module.wait_until_created(sm, timeout=10)
     services = kube_module.get_services()
     s = services.get("web-svc")
-    s.wait_until_ready(timeout=60)
+    # s.wait_until_ready(timeout=10)
     yield s
+    s.delete(options=None)
+    s.wait_until_deleted()
 
 
 """
@@ -23,8 +26,7 @@ Actual tests code below. Fixtures are called and created as needed
 
 
 @pytest.mark.it("TEST: Check ingress-nginx configurations")
-def test_resource_existance(web_deploy, web_service_headless):
-    assert web_deploy is not None, "Deployment does not exist"
+def test_svc_headless_resource_existance(web_service_headless):
     assert (
         web_service_headless is not None
     ), "LoadBalancer Service for Web does not exist"
