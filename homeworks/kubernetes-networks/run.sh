@@ -38,6 +38,9 @@ prepare() {
     export KUBECONFIG="$(kind get kubeconfig-path)"
     # Wait while all components in kube-system namespace will start
     kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
+
+    curl -L -o ./manifests/metallb.yaml https://raw.githubusercontent.com/google/metallb/v0.8.0/manifests/metallb.yaml
+    curl -L -o ./manifests/ingress-nginx.yaml https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/mandatory.yaml
 }
 
 run_tests() {
