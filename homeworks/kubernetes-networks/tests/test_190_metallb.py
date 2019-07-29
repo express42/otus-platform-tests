@@ -31,13 +31,16 @@ def test_metallb_configmap(metallb_configmap):
         metallb_configmap.obj.data.get("config"), Loader=yaml.BaseLoader
     )
 
+    pool = config_data["address-pools"][0]
     assert (
-        config_data["address-pools"][0]["protocol"] == "layer2"
-    ), "MetalLB should use Layer-2 mode"
+        pool["protocol"] == "layer2"
+    ), "MetalLB should use Layer-2 mode, but {} configured".format(pool["protocol"])
 
     assert (
-        config_data["address-pools"][0]["addresses"][0] == "172.17.255.1-172.17.255.254"
-    ), "First address pool MUST be '172.17.255.1-172.17.255.254'"
+        pool["addresses"][0] == "172.17.255.1-172.17.255.254"
+    ), "First address pool MUST be '172.17.255.1-172.17.255.254', got {} instead".format(
+        pool["addresses"][0]
+    )
 
 
 @pytest.mark.it("Verify state of MetalLB speaker pods")
