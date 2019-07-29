@@ -1,6 +1,6 @@
 import pytest
 import kubetest.objects
-import ipaddress
+from ipaddress import ip_address, ip_network
 from time import sleep
 
 """
@@ -36,10 +36,14 @@ def test_service_lb(web_service_lb):
     web_service_lb.wait_until_ready(timeout=30)
 
     assert web_service_lb.is_ready() is True, "Service is not ready (endpoints failing)"
+
+    spec = web_service_lb.obj.spec
     assert (
-        web_service_lb.obj.spec.type == "LoadBalancer"
-    ), "Service type is not LoadBalancer"
-    assert web_service_lb.obj.spec.ports[0].port == 80, "Service port is not 80"
+        spec.type == "LoadBalancer"
+    ), "Service type is not LoadBalancer - detected type is {}".format(spec.type)
+    assert (
+        spec.ports[0].port == 80
+    ), "Service port is not 80 (detected port is {})".format(spec.ports[0].port)
 
 
 @pytest.mark.it("wev-svc-lb Service should have 3 healthy endpoints")
@@ -56,9 +60,10 @@ def test_lb_service_ingress(web_service_lb):
     assert lb_ingress is not None, "LoadBalancer ingress endpoint is not set"
     assert lb_ingress[0].ip is not None, "LoadBalancer ingress IP is not defined"
     assert (
-        ipaddress.ip_address(lb_ingress[0].ip)
-        in ipaddress.ip_network("172.17.255.0/24").hosts()
-    ), "Assigned LB ingress IP is not from 172.17.255.0/24 range"
+        ip_address(lb_ingress[0].ip) in ip_network("172.17.255.0/24").hosts()
+    ), "Assigned LB ingress IP ({})is not from 172.17.255.0/24 range".format(
+        lb_ingress[0].ip
+    )
 
 
 @pytest.mark.it("Verify external connectivity for web-svc-lb service")
@@ -74,4 +79,6 @@ def test_lb_external_connection(web_service_lb, test_container):
                 )
             )
         )
-    assert len(set(res)) > 1, "Requests are not balanced between pods"
+    assert len(set(res)) > 1, "Requests are not balanced between pods:\n{}".format(
+        set(res)
+    )
