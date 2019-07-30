@@ -4,7 +4,6 @@ from kubernetes import client, config, utils
 import pytest
 import subprocess
 import testinfra
-import yaml
 
 
 """
@@ -14,17 +13,65 @@ Reusable fixtures are defined there, plus everything you'd like to do with pytes
 
 @pytest.fixture(scope="session")
 def metallb(request):
+    m = "metallb"
+
     config.load_kube_config()
     k8s_client = client.ApiClient()
-    utils.create_from_yaml(k8s_client, "./manifests/metallb.yaml")
-    utils.create_from_yaml(k8s_client, "./kubernetes-networks/metallb-config.yaml")
+    try:
+        utils.create_from_yaml(k8s_client, "./manifests/{}.yaml".format(m))
+        utils.create_from_yaml(k8s_client, "./kubernetes-networks/metallb-config.yaml")
+    except TypeError as e:
+        print(
+            "Error while loading manifest file. But we continue, anyway\n{}".format(e)
+        )
+        pass
+    finally:
 
-    def fin():
-        # Someday i'll do it better ))
-        print("Calling Kubectl to delete objects from MetalLB manifest")
-        subprocess.check_call(["kubectl", "delete", "-f", "./manifests/metallb.yaml"])
+        def fin():
+            # Someday i'll do it better ))
+            print('Calling Kubectl to delete objects from "{}" manifest'.format(m))
+            subprocess.check_call(
+                ["kubectl", "delete", "-f", "./manifests/{}.yaml".format(m)]
+            )
 
-    request.addfinalizer(fin)
+        request.addfinalizer(fin)
+
+
+@pytest.fixture(scope="session")
+def ingress_nginx(request):
+    m = "ingress-nginx"
+
+    config.load_kube_config()
+    k8s_client = client.ApiClient()
+    try:
+        utils.create_from_yaml(k8s_client, "./manifests/{}.yaml".format(m))
+    except TypeError as e:
+        print(
+            "Error while loading manifest file. But we continue, anyway\n{}".format(e)
+        )
+        pass
+    finally:
+
+        def fin():
+            # Someday i'll do it better ))
+            print('Calling Kubectl to delete objects from "{}" manifest'.format(m))
+            subprocess.check_call(
+                ["kubectl", "delete", "-f", "./manifests/{}.yaml".format(m)]
+            )
+
+        request.addfinalizer(fin)
+
+
+@pytest.fixture(scope="module")
+def nginx_svc_lb(kube_module) -> kubetest.objects.Service:
+    svc = kube_module.load_service(
+        "./kubernetes-networks/nginx-lb.yaml", set_namespace=False
+    )
+    svc.create()
+    kube_module.wait_until_created(svc, timeout=5)
+    yield svc
+    svc.delete(options=None)
+    svc.wait_until_deleted()
 
 
 @pytest.fixture(scope="function")
@@ -37,7 +84,7 @@ def test_container(request) -> testinfra.host.Host:
                 "run",
                 "-d",
                 "--rm",
-                "alpine:latest",
+                "alpine:3.9",
                 "nmeter",
                 "-d5000",
                 "%0t | MEM: %[mt] FREE:%[mf] | PROC:%[pn] | CPU: %[c]",
