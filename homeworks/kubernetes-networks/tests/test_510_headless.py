@@ -44,7 +44,7 @@ def web_ingress_rules(request, kube_module):
 
         def fin():
             # Someday i'll do it better ))
-            LOG.warn('Calling Kubectl to delete objects from "{}" manifest'.format(m))
+            LOG.info('Calling Kubectl to delete objects from "{}" manifest'.format(m))
             subprocess.check_call(
                 ["kubectl", "--namespace", ns, "delete", "-f", manifest_string]
             )
@@ -115,9 +115,11 @@ def test_service_headless(web_service_headless):
     ), "Service is not ready (endpoints failing)"
 
     spec = web_service_headless.obj.spec
-    assert (
-        spec.type == "ClusterIP"
-    ), "Service type is not ClusterIP - detected type is {}".format(spec.type)
+
+    TYPE = "ClusterIP"
+    assert spec.type == TYPE, "Service type is not {} - detected type is {}".format(
+        TYPE, spec.type
+    )
     assert (
         spec.cluster_ip == "None"
     ), "clusterIP is set in service specification, should be 'None'"
