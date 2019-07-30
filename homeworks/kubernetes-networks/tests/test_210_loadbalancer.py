@@ -10,15 +10,12 @@ Fixture definitions. Common fixtures, such as toolbox pod are in conftest.py
 
 @pytest.fixture(scope="module")
 def web_service_lb(kube_module, web_deploy) -> kubetest.objects.Service:
-    # Wait for Service to be ready on the cluster
-    sm = kube_module.load_service("./kubernetes-networks/web-svc-lb.yaml")
-    sm.create()
-    kube_module.wait_until_created(sm, timeout=10)
-    services = kube_module.get_services()
-    s = services.get("web-svc-lb")
-    yield s
-    s.delete(options=None)
-    s.wait_until_deleted()
+    svc = kube_module.load_service("./kubernetes-networks/web-svc-lb.yaml")
+    svc.create()
+    kube_module.wait_until_created(svc, timeout=10)
+    yield svc
+    svc.delete(options=None)
+    svc.wait_until_deleted()
 
 
 """
@@ -26,7 +23,7 @@ Actual tests code below. Fixtures are called and created as needed
 """
 
 
-@pytest.mark.it("TEST: Check LoadBalancer and MetalLB configurations")
+@pytest.mark.it("TEST: Check LoadBalancer service configurations")
 def test_svc_lb_resource_existance(web_service_lb):
     assert web_service_lb is not None, "LoadBalancer Service for Web does not exist"
 
