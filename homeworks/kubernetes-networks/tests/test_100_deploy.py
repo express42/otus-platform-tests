@@ -97,8 +97,9 @@ def test_service_endpoints(web_service_cip):
 
 @pytest.mark.it("Connection to ClusterIP and port should return HTTP code 200 ")
 def test_service_cip_connection(web_service_cip, test_pod):
-    out = test_pod.check_output(
+    spec = web_service_cip.obj.spec
+    test_pod.run_test(
         "wget -T 10 --spider http://{}:{}/index.html".format(
-            web_service_cip.obj.spec.cluster_ip, web_service_cip.obj.spec.ports[0].port
+            spec.cluster_ip, spec.ports[0].port
         )
     )
