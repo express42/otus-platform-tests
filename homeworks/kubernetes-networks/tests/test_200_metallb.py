@@ -5,6 +5,7 @@ import yaml
 import logging
 
 LOG = logging.getLogger(__name__)
+POOL = "172.17.255.1-172.17.255.255"
 
 
 @pytest.fixture(scope="module")
@@ -39,8 +40,6 @@ def test_metallb_configmap(metallb_configmap):
     assert (
         pool["protocol"] == "layer2"
     ), "MetalLB should use Layer-2 mode, but {} configured".format(pool["protocol"])
-
-    POOL = "172.17.255.1-172.17.255.254"
 
     assert (
         pool["addresses"][0] == POOL
