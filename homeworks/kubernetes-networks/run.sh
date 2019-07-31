@@ -44,7 +44,7 @@ prepare() {
 }
 
 run_tests() {
-    pytest --kube-config="${KUBECONFIG}" tests/
+    pytest --color=yes --kube-config="${KUBECONFIG}" tests/
 }
 
 finalize() {
