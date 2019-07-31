@@ -137,22 +137,24 @@ def test_headless_service_endpoints(web_service_headless):
 @pytest.mark.it("Connect to headless service via Ingress-Nginx")
 @pytest.mark.usefixtures("web_ingress_rules")
 def test_ingress_external_connection(nginx_svc_lb, test_container):
-    ip = nginx_svc_lb.obj.status.load_balancer.ingress[0].ip
+    svc = nginx_svc_lb
+    ip = svc.obj.status.load_balancer.ingress[0].ip
     assert ip is not None
     test_container.run("apk --no-cache -q add curl")
     assert (
         test_container.package("curl").is_installed is True
-    ), "Can't bootstrap test container - curl is not installed"
+    ), "Can't bootstrap test container - curl installation unsuccessful"
 
     res = list()
     for test in range(0, 4):
-        res.append(
-            test_container.check_output(
-                "curl --connect-timeout 10 -kL -sS --url http://{}:{}/web/index.html | grep HOSTNAME".format(
-                    ip, "80"
-                )
+        out = test_container.check_output(
+            "curl --connect-timeout 10 -kL -sS --url http://{}:{}/web/index.html".format(
+                ip, "80"
             )
         )
+        host = [line for line in out.splitlines() if line.find("HOSTNAME") != -1]
+        print(host)
+        res.extend(host)
     assert len(set(res)) > 1, "Requests are not balanced between pods:\n{}".format(
         set(res)
     )

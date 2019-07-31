@@ -65,17 +65,24 @@ def test_lb_service_ingress(web_service_lb):
 
 @pytest.mark.it("Verify external connectivity for web-svc-lb service")
 def test_lb_external_connection(web_service_lb, test_container):
-    ip = web_service_lb.obj.status.load_balancer.ingress[0].ip
+    svc = web_service_lb
+    ip = svc.obj.status.load_balancer.ingress[0].ip
     assert ip is not None
+    test_container.run("apk --no-cache -q add curl")
+    assert (
+        test_container.package("curl").is_installed is True
+    ), "Can't bootstrap test container - curl installation unsuccessful"
+
     res = list()
     for test in range(0, 4):
-        res.append(
-            test_container.check_output(
-                "wget -T 10 -O- http://{}:{}/index.html | grep HOSTNAME".format(
-                    ip, "80"
-                )
+        out = test_container.check_output(
+            "curl --connect-timeout 10 -kL -sS --url http://{}:{}/web/index.html".format(
+                ip, "80"
             )
         )
+        host = [line for line in out.splitlines() if line.find("HOSTNAME") != -1]
+        print(host)
+        res.extend(host)
     assert len(set(res)) > 1, "Requests are not balanced between pods:\n{}".format(
         set(res)
     )
