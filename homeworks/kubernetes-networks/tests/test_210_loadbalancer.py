@@ -76,7 +76,7 @@ def test_lb_external_connection(web_service_lb, test_container):
     res = list()
     for test in range(0, 4):
         out = test_container.check_output(
-            "curl --connect-timeout 10 -kL -sS --url http://{}:{}/web/index.html".format(
+            "curl --connect-timeout 10 -kL -sS --url http://{}:{}/index.html".format(
                 ip, "80"
             )
         )
