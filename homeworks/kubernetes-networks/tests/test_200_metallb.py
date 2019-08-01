@@ -13,7 +13,7 @@ def metallb_configmap(kube_module, metallb):
     cm = kube_module.load_configmap(
         "./kubernetes-networks/metallb-config.yaml", set_namespace=False
     )
-    kube_module.wait_until_created(cm, timeout=5)
+    kube_module.wait_until_created(cm, timeout=30)
     yield cm
 
 
@@ -24,7 +24,7 @@ def test_metallb_namespace_exists(kube_module):
     # to wait until namespace is available.
     # .new() creates object representation without calling K8s API
     ns = kubetest.objects.Namespace.new(name="metallb-system")
-    kube_module.wait_until_created(ns, timeout=5)
+    kube_module.wait_until_created(ns, timeout=30)
     assert ns.is_ready() is True, 'Namespace "{}" doesn\'t exist'.format(ns.name)
 
 
@@ -56,7 +56,7 @@ def test_metallb_speaker_pods(kube):
     )
     assert len(speaker_list) > 0, "MetalLB Speakers are not running"
     for pn, o_pod in speaker_list.items():
-        o_pod.wait_until_ready(timeout=10)
+        o_pod.wait_until_ready(timeout=30)
         assert o_pod.is_ready() is True, "{} pod is not ready".format(pn)
 
 
@@ -70,5 +70,5 @@ def test_metallb_controller_pods(kube):
     )
     assert len(controller_list) > 0, "MetalLB Controllers are not running"
     for pn, o_pod in controller_list.items():
-        o_pod.wait_until_ready(timeout=10)
+        o_pod.wait_until_ready(timeout=30)
         assert o_pod.is_ready() is True, "{} pod is not ready".format(pn)

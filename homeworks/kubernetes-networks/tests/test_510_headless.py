@@ -69,7 +69,7 @@ def test_nginx_namespace_exists(kube):
     # to wait until namespace is available.
     # .new() creates object representation without calling K8s API
     ns = kubetest.objects.Namespace.new(name="ingress-nginx")
-    kube.wait_until_created(ns, timeout=5)
+    kube.wait_until_created(ns, timeout=30)
     assert ns.is_ready() is True, 'Namespace "{}" doesn\'t exist'.format(ns.name)
 
 
@@ -153,7 +153,11 @@ def test_ingress_external_connection(nginx_svc_lb, test_container):
             )
         )
         host = [line for line in out.splitlines() if line.find("HOSTNAME") != -1]
-        print(host)
+        assert (
+            host != list
+        ), "String 'HOSTNAME' is not found in HTTP response. Captured output was (first 5 lines):\n{}".format(
+            out.splitlines()[:5]
+        )
         res.extend(host)
     assert len(set(res)) > 1, "Requests are not balanced between pods:\n{}".format(
         set(res)

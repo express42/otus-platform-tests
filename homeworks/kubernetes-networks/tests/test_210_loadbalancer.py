@@ -12,7 +12,7 @@ Fixture definitions. Common fixtures, such as toolbox pod are in conftest.py
 def web_service_lb(kube_module, web_deploy) -> kubetest.objects.Service:
     svc = kube_module.load_service("./kubernetes-networks/web-svc-lb.yaml")
     svc.create()
-    kube_module.wait_until_created(svc, timeout=10)
+    kube_module.wait_until_created(svc, timeout=30)
     yield svc
     svc.delete(options=None)
     svc.wait_until_deleted()
@@ -81,7 +81,11 @@ def test_lb_external_connection(web_service_lb, test_container):
             )
         )
         host = [line for line in out.splitlines() if line.find("HOSTNAME") != -1]
-        print(host)
+        assert (
+            host != list
+        ), "String 'HOSTNAME' is not found in HTTP response. Captured output was (first 5 lines):\n{}".format(
+            out.splitlines()[:5]
+        )
         res.extend(host)
     assert len(set(res)) > 1, "Requests are not balanced between pods:\n{}".format(
         set(res)
