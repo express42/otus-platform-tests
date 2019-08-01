@@ -4,13 +4,12 @@ from kubernetes import client, config, utils
 import pytest
 import subprocess
 import testinfra
+import logging
 
-
+LOG = logging.getLogger(__name__)
 """
 Reusable fixtures are defined there, plus everything you'd like to do with pytest
 """
-
-
 @pytest.fixture(scope="session")
 def metallb(request):
     m = "metallb"
@@ -19,20 +18,22 @@ def metallb(request):
     k8s_client = client.ApiClient()
     try:
         utils.create_from_yaml(k8s_client, "./manifests/{}.yaml".format(m))
-        utils.create_from_yaml(k8s_client, "./kubernetes-networks/metallb-config.yaml")
+        utils.create_from_yaml(k8s_client,
+                               "./kubernetes-networks/metallb-config.yaml")
     except TypeError as e:
-        print(
-            "Error while loading manifest file. But we continue, anyway\n{}".format(e)
-        )
+        LOG.warning(
+            "Error while loading manifest file {}. But we continue, anyway\n{}"
+            .format(m, e))
         pass
     finally:
 
         def fin():
             # Someday i'll do it better ))
-            print('Calling Kubectl to delete objects from "{}" manifest'.format(m))
+            LOG.info(
+                'Calling Kubectl to delete objects from "{}" manifest'.format(
+                    m))
             subprocess.check_call(
-                ["kubectl", "delete", "-f", "./manifests/{}.yaml".format(m)]
-            )
+                ["kubectl", "delete", "-f", "./manifests/{}.yaml".format(m)])
 
         request.addfinalizer(fin)
 
@@ -46,27 +47,27 @@ def ingress_nginx(request):
     try:
         utils.create_from_yaml(k8s_client, "./manifests/{}.yaml".format(m))
     except TypeError as e:
-        print(
-            "Error while loading manifest file. But we continue, anyway\n{}".format(e)
-        )
+        LOG.warning(
+            "Error while loading manifest file {}. But we continue, anyway\n{}"
+            .format(m, e))
         pass
     finally:
 
         def fin():
             # Someday i'll do it better ))
-            print('Calling Kubectl to delete objects from "{}" manifest'.format(m))
+            LOG.info(
+                'Calling Kubectl to delete objects from "{}" manifest'.format(
+                    m))
             subprocess.check_call(
-                ["kubectl", "delete", "-f", "./manifests/{}.yaml".format(m)]
-            )
+                ["kubectl", "delete", "-f", "./manifests/{}.yaml".format(m)])
 
         request.addfinalizer(fin)
 
 
 @pytest.fixture(scope="module")
 def nginx_svc_lb(kube_module) -> kubetest.objects.Service:
-    svc = kube_module.load_service(
-        "./kubernetes-networks/nginx-lb.yaml", set_namespace=False
-    )
+    svc = kube_module.load_service("./kubernetes-networks/nginx-lb.yaml",
+                                   set_namespace=False)
     svc.create()
     kube_module.wait_until_created(svc, timeout=5)
     yield svc
@@ -77,22 +78,16 @@ def nginx_svc_lb(kube_module) -> kubetest.objects.Service:
 @pytest.fixture(scope="function")
 def test_container(request) -> testinfra.host.Host:
     # run a container
-    docker_id = (
-        subprocess.check_output(
-            [
-                "docker",
-                "run",
-                "-d",
-                "--rm",
-                "alpine:3.9",
-                "nmeter",
-                "-d5000",
-                "%0t | MEM: %[mt] FREE:%[mf] | PROC:%[pn] | CPU: %[c]",
-            ]
-        )
-        .decode()
-        .strip()
-    )
+    docker_id = (subprocess.check_output([
+        "docker",
+        "run",
+        "-d",
+        "--rm",
+        "alpine:3.9",
+        "nmeter",
+        "-d5000",
+        "%0t | MEM: %[mt] FREE:%[mf] | PROC:%[pn] | CPU: %[c]",
+    ]).decode().strip())
 
     yield testinfra.get_host("docker://" + docker_id)
     # return a testinfra connection to the container
@@ -106,9 +101,8 @@ def test_pod(kube_module) -> testinfra.host.Host:
     kube_module.wait_until_created(p, timeout=10)
     p.wait_until_ready(timeout=30)
 
-    yield testinfra.get_host(
-        "kubectl://{pod}?namespace={ns}".format(ns=p.namespace, pod=p.name)
-    )
+    yield testinfra.get_host("kubectl://{pod}?namespace={ns}".format(
+        ns=p.namespace, pod=p.name))
     p.delete(options=None)
 
 
