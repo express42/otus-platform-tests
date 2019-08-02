@@ -23,45 +23,42 @@ def web_service_headless(kube_module, web_deploy) -> kubetest.objects.Service:
 
 @pytest.fixture(scope="module")
 def web_ingress_rules(request, kube_module):
-    m = "web-ingress"
+    manifest = "web-ingress"
     path = "./kubernetes-networks"
-    manifest_string = "{path}/{fn}.yaml".format(fn=m, path=path)
-
+    manifest_string = "{path}/{fn}.yaml".format(fn=manifest, path=path)
     ns = kube_module.namespace
+
+    log_pattern = "Backend successfully reloaded"
 
     config.load_kube_config()
     k8s_client = client.ApiClient()
-    try:
-        utils.create_from_yaml(k8s_client, manifest_string, namespace=ns)
-    except TypeError as e:
-        LOG.warning(
-            "Error while loading manifest file. But we continue, anyway\n{}".
-            format(e))
-        pass
-    finally:
 
-        def fin():
-            # Someday i'll do it better ))
-            LOG.info(
-                'Calling Kubectl to delete objects from "{}" manifest'.format(
-                    m))
-            subprocess.check_call([
-                "kubectl", "--namespace", ns, "delete", "-f", manifest_string
-            ])
+    utils.create_from_yaml(k8s_client, manifest_string, namespace=ns)
 
-        request.addfinalizer(fin)
+    def fin():  # Someday i'll do it better ))
+        LOG.info('Calling Kubectl to delete objects from "%s" manifest',
+                 manifest)
+        subprocess.check_call(
+            ["kubectl", "--namespace", ns, "delete", "-f", manifest_string])
+
+    request.addfinalizer(fin)
+
+    nginx_pods = kube_module.get_pods(
+        namespace="ingress-nginx",
+        labels={"app.kubernetes.io/name": "ingress-nginx"})
+
+    for pod in nginx_pods.values():
+        container = pod.get_container(name="nginx-ingress-controller")
+        count: int = 0
+        while count < 3 and not container.search_logs(log_pattern):
+            LOG.error(container.get_logs())
+            sleep(1)
+            count = count + 1
 
 
 """
 Actual tests code below. Fixtures are called and created as needed
 """
-
-import pytest
-import kubetest.objects
-from ipaddress import ip_address, ip_network
-from time import sleep
-
-
 @pytest.mark.usefixtures("ingress_nginx")
 @pytest.mark.it("TEST: Check ingress-nginx installation")
 def test_nginx_namespace_exists(kube):
@@ -110,12 +107,13 @@ def test_svc_headless_resource_existance(web_service_headless):
 
 @pytest.mark.it("Verify Headless service configuration")
 def test_service_headless(web_service_headless):
+    TYPE = "ClusterIP"
+
     assert (web_service_headless.is_ready() is
             True), "Service is not ready (endpoints failing)"
 
     spec = web_service_headless.obj.spec
 
-    TYPE = "ClusterIP"
     assert spec.type == TYPE, "Service type is not {} - detected type is {}".format(
         TYPE, spec.type)
     assert (spec.cluster_ip == "None"

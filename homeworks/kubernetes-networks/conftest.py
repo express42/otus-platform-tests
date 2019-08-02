@@ -44,20 +44,18 @@ def ingress_nginx(request):
 
     config.load_kube_config()
     k8s_client = client.ApiClient()
+
     try:
         utils.create_from_yaml(k8s_client, "./manifests/{}.yaml".format(m))
-    except TypeError as e:
+    except TypeError as exc:
         LOG.warning(
-            "Error while loading manifest file {}. But we continue, anyway\n{}"
-            .format(m, e))
+            "Error while loading manifest file %s. But we continue, anyway\n%s",
+            m, exc)
         pass
     finally:
 
-        def fin():
-            # Someday i'll do it better ))
-            LOG.info(
-                'Calling Kubectl to delete objects from "{}" manifest'.format(
-                    m))
+        def fin():  # Someday i'll do it better ))
+            LOG.info('Calling Kubectl to delete objects from "%s" manifest', m)
             subprocess.check_call(
                 ["kubectl", "delete", "-f", "./manifests/{}.yaml".format(m)])
 
@@ -76,7 +74,7 @@ def nginx_svc_lb(kube_module) -> kubetest.objects.Service:
 
 
 @pytest.fixture(scope="function")
-def test_container(request) -> testinfra.host.Host:
+def test_container() -> testinfra.host.Host:
     # run a container
     docker_id = (subprocess.check_output([
         "docker",
