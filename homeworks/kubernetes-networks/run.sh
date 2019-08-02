@@ -1,7 +1,7 @@
 #!/bin/bash
 set -xe
 
-export TERM=xterm-256color
+export TERM=xterm
 
 download(){
     export KUBECTL_VER="$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
