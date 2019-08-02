@@ -28,7 +28,7 @@ def web_ingress_rules(request, kube_module):
     manifest_string = "{path}/{fn}.yaml".format(fn=manifest, path=path)
     ns = kube_module.namespace
 
-    log_pattern = "Backend successfully reloaded"
+    log_pattern = "reason: 'CREATE' Ingress {}/web".format(ns)
 
     config.load_kube_config()
     k8s_client = client.ApiClient()
@@ -52,7 +52,7 @@ def web_ingress_rules(request, kube_module):
         count: int = 0
         while count < 3 and not container.search_logs(log_pattern):
             LOG.error(container.get_logs())
-            sleep(1)
+            sleep(3)
             count = count + 1
 
 
