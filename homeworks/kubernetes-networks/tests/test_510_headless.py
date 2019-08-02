@@ -34,7 +34,11 @@ def web_ingress_rules(request, kube_module):
     k8s_client = client.ApiClient()
 
     utils.create_from_yaml(k8s_client, manifest_string, namespace=ns)
-    sleep(3)  #OMG. It's a kludge.
+    # OMG. It's a kludge. We explicity wait until ingress-controller
+    # catches the ingress rules. This bug is mostly Travis specific,
+    # and I still haven't figured out programmatical way of getting
+    # current backend state in ingress-nginx.
+    sleep(3)
 
     def fin():  # Someday i'll do it better ))
         LOG.info('Calling Kubectl to delete objects from "%s" manifest',
@@ -44,6 +48,8 @@ def web_ingress_rules(request, kube_module):
 
     request.addfinalizer(fin)
 
+    # Below goes an unsuccessful try on getting backend state. But it doesn't work
+    # unfortunately.
     nginx_pods = kube_module.get_pods(
         namespace="ingress-nginx",
         labels={"app.kubernetes.io/name": "ingress-nginx"})
