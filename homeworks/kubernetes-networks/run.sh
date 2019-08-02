@@ -18,16 +18,16 @@ download(){
 
 pytest_bootstrap() {
     # Install Py3 Venv module
-    # sudo apt-get -q -y install software-properties-common
-    # sudo apt-add-repository universe
-    # sudo apt-get -qq update
-    # sudo apt-get -q -y install python3-venv
+    sudo apt-get -q -y install software-properties-common
+    sudo apt-add-repository universe
+    sudo apt-get -qq update
+    sudo apt-get -q -y install python3-venv
 
     # Create and activate venv for PyTest
-    # python3 -m venv /tmp/pytest && \
-    # source /tmp/pytest/bin/activate
+    python3 -m venv /tmp/pytest && \
+    source /tmp/pytest/bin/activate
 
-    # pip3 install -q -U pip setuptools
+    pip3 install -q -U pip setuptools
 
     # Setup Pytest environment
     cp -fr ./otus-platform-tests/homeworks/kubernetes-networks/* ./
