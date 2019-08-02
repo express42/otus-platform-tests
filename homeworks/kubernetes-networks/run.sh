@@ -18,7 +18,7 @@ download(){
 
 pytest_bootstrap() {
     # Install Py3 Venv module
-    sudo apt-get -q -y install software-properties-common
+    sudo apt-get -q -y install software-properties-common expect-dev
     sudo apt-add-repository universe
     sudo apt-get -qq update
     sudo apt-get -q -y install python3-venv
@@ -46,7 +46,7 @@ prepare() {
 }
 
 run_tests() {
-    pytest --color=yes --kube-config="${KUBECONFIG}" tests/
+    unbuffer pytest --color=yes --kube-config="${KUBECONFIG}" tests/
 }
 
 finalize() {
