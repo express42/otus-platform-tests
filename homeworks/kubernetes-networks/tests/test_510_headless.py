@@ -34,6 +34,7 @@ def web_ingress_rules(request, kube_module):
     k8s_client = client.ApiClient()
 
     utils.create_from_yaml(k8s_client, manifest_string, namespace=ns)
+    sleep(3)  #OMG. It's a kludge.
 
     def fin():  # Someday i'll do it better ))
         LOG.info('Calling Kubectl to delete objects from "%s" manifest',
