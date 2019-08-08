@@ -1,3 +1,9 @@
+"""
+Checks for manifests, related to KubeDNS service (CoreDNS, actually),
+deploys LoadBalancer-type service (for usage with MetalLB), then
+runs Docker-container with 'drill', to test reachability of KubeDNS from
+external network. Intended to use with Kind-based K8s clusters.
+"""
 import logging
 from time import sleep
 from typing import Dict, List, Optional
@@ -54,6 +60,9 @@ def preload_manifests(path: str,
     Loads all manifest files from dir, and returns a list of all
     Service objects with matching selector in spec
     """
+
+    objects: List[object] = list()
+
     try:
         objects = load_path(path)
     except ValueError:
@@ -111,9 +120,7 @@ def get_lb_ip(service: kubetest.objects.Service) -> Optional[str]:
     """ Returns IP address of LoadBalancer-assigned Ingress or None """
     ip: Optional[str] = None
     count: int = 0
-    while ip is None:
-        if count == 3:
-            break
+    while ip is None and count < 3:
         try:
             service.refresh()
             ip = service.obj.status.load_balancer.ingress[0].ip
