@@ -75,7 +75,7 @@ def preload_manifests(path: str,
     return coredns_svc
 
 
-MANIFESTS = preload_manifests(path="./kubernetes-networks",
+MANIFESTS = preload_manifests(path="./kubernetes-networks/coredns",
                               selector={"k8s-app": "kube-dns"})
 
 if not MANIFESTS:
