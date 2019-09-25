@@ -29,7 +29,7 @@ kubectl apply -f kubernetes-operators/deploy/cr.yml
 
 
 kubectl wait --for=condition=Available deployment/mysql-operator
-export MYSQLPOD=$(kubectl get pods -l app=mysql-instance -o jsonpath="{.items[*].metadata.name}")
+export MYSQLPOD="$(kubectl get pods -l app=mysql-instance -o jsonpath="{.items[*].metadata.name}")"
 kubectl wait --for=condition=Ready pod/$MYSQLPOD --timeout=300s
 
 # Fill DB:
@@ -49,7 +49,7 @@ kubectl wait --for=condition=complete jobs/restore-mysql-instance-job  --timeout
 # if [ `echo $content | egrep 'some data' | wc -l` -eq 2 ]; then echo passed && exit 0; else echo error; fi 
 
 #check content
-export MYSQLPOD=$(kubectl get pods -l app=mysql-instance -o jsonpath="{.items[*].metadata.name}")
-content=$(kubectl exec -it $MYSQLPOD -- bash -c 'MYSQL_PWD=otuspassword  mysql -ss -e "select count(*) from test where name LIKE \"some data%\";" otus-database')
+export MYSQLPOD="$(kubectl get pods -l app=mysql-instance -o jsonpath="{.items[*].metadata.name}")"
+content="$(kubectl exec -it $MYSQLPOD -- bash -c 'MYSQL_PWD=otuspassword  mysql -ss -e "select count(*) from test where name LIKE \"some data%\";" otus-database')"
 
 if [$content -eq 2] then exit 0; else exit 1
