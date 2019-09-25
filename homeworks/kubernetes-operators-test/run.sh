@@ -42,6 +42,7 @@ kubectl exec -it $MYSQLPOD -- mysql -potuspassword -e "INSERT INTO test ( id, na
 # Redeploy mysql
 kubectl delete -f kubernetes-operators/deploy/cr.yml
 kubectl apply -f kubernetes-operators/deploy/cr.yml
+sleep 10
 kubectl wait --for=condition=complete jobs/restore-mysql-instance-job  --timeout=600s
 
 
