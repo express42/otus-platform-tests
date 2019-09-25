@@ -29,8 +29,8 @@ kubectl apply -f kubernetes-operators/deploy/cr.yml
 
 
 kubectl wait --for=condition=Available deployment/mysql-operator --timeout=300s
-export MYSQLPOD="$(kubectl get pods -l app=mysql-instance -o jsonpath="{.items[*].metadata.name}")"
 sleep 10
+export MYSQLPOD="$(kubectl get pods -l app=mysql-instance -o jsonpath="{.items[*].metadata.name}")"
 kubectl wait --for=condition=Ready pod/$MYSQLPOD --timeout=300s
 
 # Fill DB:
