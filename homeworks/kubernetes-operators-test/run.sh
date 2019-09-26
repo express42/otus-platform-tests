@@ -55,9 +55,9 @@ kubectl wait --for=condition=Ready pod/$MYSQLPOD --timeout=300s
 
 # Fill DB:
 
-kubectl exec -it $MYSQLPOD -- mysql -u root -potuspassword -e "CREATE TABLE test ( id smallint unsigned not null auto_increment, name varchar(20) not null, constraint pk_example primary key (id) );" otus-database
-kubectl exec -it $MYSQLPOD -- mysql -potuspassword -e "INSERT INTO test ( id, name ) VALUES ( null, 'some data' );" otus-database
-kubectl exec -it $MYSQLPOD -- mysql -potuspassword -e "INSERT INTO test ( id, name ) VALUES ( null, 'some data-2' );" otus-database
+kubectl exec -it $MYSQLPOD -- bash -c 'MYSQL_PWD=otuspassword mysql -u root  -e "CREATE TABLE test ( id smallint unsigned not null auto_increment, name varchar(20) not null, constraint pk_example primary key (id) );" otus-database'
+kubectl exec -it $MYSQLPOD -- bash -c 'MYSQL_PWD=otuspassword  mysql  -e "INSERT INTO test ( id, name ) VALUES ( null, 'some data' );" otus-database'
+kubectl exec -it $MYSQLPOD -- bash -c 'MYSQL_PWD=otuspassword mysql  -e "INSERT INTO test ( id, name ) VALUES ( null, 'some data-2' );" otus-database'
 
 # Redeploy mysql
 kubectl delete -f kubernetes-operators/deploy/cr.yml
@@ -80,8 +80,9 @@ kubectl wait --for=condition=complete jobs/restore-mysql-instance-job  --timeout
 export MYSQLPOD="$(kubectl get pods -l app=mysql-instance -o jsonpath="{.items[*].metadata.name}")"
 content="$(kubectl exec -it $MYSQLPOD -- bash -c 'MYSQL_PWD=otuspassword  mysql -ss -e "select count(*) from test where name LIKE \"some data%\";" otus-database')"
 
-if [[$content == "2"]];
+if [[$content == "2"]]
 then 
     exit 0 
 else 
     exit 1
+fi
