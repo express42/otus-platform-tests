@@ -6,13 +6,13 @@ sleep 10
 COUNT=0;
 while(true)
 do
-if (( COUNT < 20 ))
+if (( %COUNT < 20 ))
 then
 if kubectl get jobs | grep "$1" >/dev/null
 then
 break
 fi
-COUNT++
+((COUNT++))
 sleep 5
 continue
 fi
