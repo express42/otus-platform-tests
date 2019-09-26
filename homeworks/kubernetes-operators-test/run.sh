@@ -6,7 +6,7 @@ sleep 10
 COUNT=0;
 while(true)
 do
-if((COUNT < 20 ))
+if (( COUNT < 20 ))
 then
 if kubectl get jobs | grep "$1" >/dev/null
 then
@@ -80,7 +80,7 @@ kubectl wait --for=condition=complete jobs/restore-mysql-instance-job  --timeout
 export MYSQLPOD="$(kubectl get pods -l app=mysql-instance -o jsonpath="{.items[*].metadata.name}")"
 content="$(kubectl exec -it $MYSQLPOD -- bash -c 'MYSQL_PWD=otuspassword  mysql -ss -e "select count(*) from test where name LIKE \"some data%\";" otus-database')"
 
-if [[$content == "2"]]
+if [[ "$content" == "2" ]]
 then 
     exit 0 
 else 
