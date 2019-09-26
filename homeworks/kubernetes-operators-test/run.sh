@@ -1,6 +1,26 @@
 #!/bin/bash
 set -xe
 
+function wait_for_job_creation {
+sleep 10
+COUNT=0;
+while(true)
+do
+if((COUNT < 20 ))
+then
+if kubectl get jobs | grep "$1" >/dev/null
+then
+break
+fi
+COUNT++
+sleep 5
+continue
+fi
+break
+done
+}
+
+
 # Download kubectl
 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl 
 chmod +x kubectl
@@ -41,10 +61,14 @@ kubectl exec -it $MYSQLPOD -- mysql -potuspassword -e "INSERT INTO test ( id, na
 
 # Redeploy mysql
 kubectl delete -f kubernetes-operators/deploy/cr.yml
-sleep 10
-kubectl wait --for=condition=complete jobs/backup-mysql-instance-job
+wait_for_job_creation backup-mysql-instance-job
+
+
+# kubectl get jobs | grep "backup-mysql-instance-job"
+kubectl wait --for=condition=complete jobs/backup-mysql-instance-job --timeout=600s
 kubectl apply -f kubernetes-operators/deploy/cr.yml
-sleep 10
+
+wait_for_job_creation restore-mysql-instance-job 
 kubectl wait --for=condition=complete jobs/restore-mysql-instance-job  --timeout=600s
 
 
