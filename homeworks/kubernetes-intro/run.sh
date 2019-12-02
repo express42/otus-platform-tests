@@ -8,12 +8,11 @@ sudo mv kubectl /usr/local/bin/
 
 # Download kind
 curl -Lo kind https://github.com/kubernetes-sigs/kind/releases/download/v0.6.0/kind-linux-amd64
-chmod +x kind 
+chmod +x kind
 sudo mv kind /usr/local/bin/
 
 # Create kind cluster
 kind create cluster --wait 300s
-export KUBECONFIG="$(kind get kubeconfig-path)"
 
 # Wait while all components in kube-system namespace will start
 kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
