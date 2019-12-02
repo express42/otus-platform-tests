@@ -15,7 +15,7 @@
 ## Как запустить тесты локально
 
 1. Клоним репозиторий с тестами `otus-platform-tests` : `git clone https://github.com/express42/otus-platform-tests.git`
-2. Переходим в ветку тестов для группы `2019-06`: `git checkout 2019-06`
+2. Переходим в ветку тестов для группы `2019-12`: `git checkout 2019-12`
 3. Скрипт можно запустить 2мя способами:
     * Запуск с параметрами: `./local-run.sh {абсолютный-путь-к-локальной-папке-[gitname]_platform} {имя-папки-с-дз}`.
     Например: `./local-run.sh /Users/ivan.ivanov/Documents/src/ivan_platform kubernetes-networks`. Таким образом мы запустим
