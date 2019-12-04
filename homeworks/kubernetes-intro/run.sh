@@ -58,5 +58,9 @@ echo "Preparing test cluster..."
 prepare
 echo "Running mandatory tests..."
 run_mandatory_tests
-echo "Running additional tests..."
-run_additional_tests | exit 0
+
+FILE=./frontend-pod-healthy.yaml
+if [ -f "$FILE" ]; then
+    echo "Manifest $FILE exist, running additional tests"
+    run_additional_tests
+fi

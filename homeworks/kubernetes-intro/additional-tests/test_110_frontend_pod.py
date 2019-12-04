@@ -7,7 +7,7 @@ import time
 def frontend_pod(kube_module) -> kubetest.objects.Pod:
     # Wait while token controller generates tokens and adds them to the service account
     time.sleep(10)
-    pod = kube_module.load_pod("./kubernetes-intro/frontend-pod.yaml")
+    pod = kube_module.load_pod("./kubernetes-intro/frontend-pod-healthy.yaml")
     pod.create()
     kube_module.wait_until_created(pod, timeout=10)
 
