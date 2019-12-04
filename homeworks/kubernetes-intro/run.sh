@@ -59,7 +59,7 @@ prepare
 echo "Running mandatory tests..."
 run_mandatory_tests
 
-FILE=./frontend-pod-healthy.yaml
+FILE=./kubernetes-intro/frontend-pod-healthy.yaml
 if [ -f "$FILE" ]; then
     echo "Manifest $FILE exist, running additional tests"
     run_additional_tests
