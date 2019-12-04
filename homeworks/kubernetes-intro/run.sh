@@ -32,13 +32,13 @@ pytest_bootstrap() {
     pip3 install -q -U pip setuptools
 
     # Setup Pytest environment
-     cp -fr ./otus-platform-tests/homeworks/${HOMEWORK}/* ./
+    cp -fr ./otus-platform-tests/homeworks/${HOMEWORK}/* ./
     pip3 install -q --disable-pip-version-check -r requirements.txt
 }
 
 prepare() {
     # Create kind cluster
-    kind create cluster --wait 300s
+    kind create cluster -q --wait 300s
     # Wait while all components in kube-system namespace will start
     kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
 }
