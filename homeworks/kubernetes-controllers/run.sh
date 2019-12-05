@@ -24,7 +24,7 @@ go_bootstrap() {
     sudo apt-get update
     sudo apt-get install golang-go
     cp -fr ./otus-platform-tests/homeworks/${HOMEWORK}/* ./
-
+    go version
 }
 
 prepare() {
