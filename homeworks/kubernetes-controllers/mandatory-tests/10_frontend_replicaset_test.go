@@ -19,7 +19,7 @@ import (
 func TestKubernetesFrontendReplicaSet(t *testing.T) {
 	t.Parallel()
 
-	kubeResourcePath, err := filepath.Abs("../nvelgin-otus-test_platform/kubernetes-controllers/frontend-replicaset.yaml")
+	kubeResourcePath, err := filepath.Abs("../kubernetes-controllers/frontend-replicaset.yaml")
 	require.NoError(t, err)
 
 	namespaceName := fmt.Sprintf("kubernetes-controllers-%s", strings.ToLower(random.UniqueId()))
