@@ -36,6 +36,7 @@ prepare() {
 
 run_mandatory_tests() {
     cd ./mandatory-tests
+    go mod tidy
     go test
 }
 
