@@ -10,6 +10,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -18,7 +19,7 @@ import (
 func TestKubernetesPaymentDeployment(t *testing.T) {
 	t.Parallel()
 
-	kubeResourcePath, err := filepath.Abs("../kubernetes-controllers/paymentservice-deployment.yaml")
+	kubeResourcePath, err := filepath.Abs("../nvelgin-otus-test_platform/kubernetes-controllers/paymentservice-deployment.yaml")
 	require.NoError(t, err)
 
 	namespaceName := fmt.Sprintf("kubernetes-controllers-%s", strings.ToLower(random.UniqueId()))
@@ -41,6 +42,6 @@ func TestKubernetesPaymentDeployment(t *testing.T) {
 	}
 
 	for _, pod := range k8s.ListPods(t, options, filters) {
-		require.True(t, pod.Status.ContainerStatuses[0].Ready, "All pods should be Ready")
+		assert.True(t, pod.Status.ContainerStatuses[0].Ready, "All pods should be Ready")
 	}
 }

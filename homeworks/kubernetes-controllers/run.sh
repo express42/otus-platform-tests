@@ -43,10 +43,6 @@ run_mandatory_tests() {
     go test
 }
 
-run_additional_tests() {
-    pytest --color=yes --kube-config=~/.kube/config additional-tests/
-}
-
 echo "Downloading and bootstrapping dependencies..."
 download
 go_bootstrap
