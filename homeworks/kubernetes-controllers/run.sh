@@ -36,7 +36,6 @@ run_additional_tests() {
 
 echo "Downloading and bootstrapping dependencies..."
 download
-pytest_bootstrap
 echo "Preparing test cluster..."
 prepare
 echo "Running mandatory tests..."
