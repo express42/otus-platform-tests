@@ -18,7 +18,7 @@ import (
 func TestKubernetesFrontendDeployment(t *testing.T) {
 	t.Parallel()
 
-	kubeResourcePath, err := filepath.Abs("../frontend-deployment.yaml")
+	kubeResourcePath, err := filepath.Abs("../kubernetes-controllers/frontend-deployment.yaml")
 	require.NoError(t, err)
 
 	namespaceName := fmt.Sprintf("kubernetes-controllers-%s", strings.ToLower(random.UniqueId()))

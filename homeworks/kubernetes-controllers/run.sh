@@ -23,7 +23,8 @@ go_bootstrap() {
     sudo add-apt-repository ppa:longsleep/golang-backports
     sudo apt-get update
     sudo apt-get install golang-go
-    ls -lah
+    cp -fr ./otus-platform-tests/homeworks/${HOMEWORK}/* ./
+
 }
 
 prepare() {
