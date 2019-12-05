@@ -1,23 +1,43 @@
 #!/bin/bash
 set -xe
 
-# Download kubectl
-curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl 
-chmod +x kubectl
-sudo mv kubectl /usr/local/bin/
+export TERM=xterm
+export HOMEWORK="kubernetes-controllers"
+export KUBECONFIG=~/.kube/config
 
-# Download kind
-curl -Lo kind https://github.com/kubernetes-sigs/kind/releases/download/v0.6.0/kind-linux-amd64
-chmod +x kind
-sudo mv kind /usr/local/bin/
+download(){
+    export KUBECTL_VER="$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
+    export KIND_VER="v0.6.0"
 
-# Create kind cluster
-kind create cluster --wait 300s
+    # Download kubectl
+    curl -L -o /tmp/kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VER}/bin/linux/amd64/kubectl
+    sudo install /tmp/kubectl /usr/local/bin/
 
-# Wait while all components in kube-system namespace will start
-kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
+    # Download kind
+    curl -L -o /tmp/kind https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VER}/kind-linux-amd64
+    sudo install /tmp/kind /usr/local/bin/
+}
 
-# Apply all manifests from kubernetes-controllers folder
-kubectl apply -f kubernetes-controllers/
+prepare() {
+    # Create kind cluster
+    kind create cluster -q --wait 300s
+    # Wait while all components in kube-system namespace will start
+    kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
+}
 
-exit 1
+run_mandatory_tests() {
+    cd mandatory-tests
+    go test
+}
+
+run_additional_tests() {
+    pytest --color=yes --kube-config=~/.kube/config additional-tests/
+}
+
+echo "Downloading and bootstrapping dependencies..."
+download
+pytest_bootstrap
+echo "Preparing test cluster..."
+prepare
+echo "Running mandatory tests..."
+run_mandatory_tests
