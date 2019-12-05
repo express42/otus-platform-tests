@@ -4,7 +4,6 @@ set -xe
 export TERM=xterm
 export HOMEWORK="kubernetes-controllers"
 export KUBECONFIG=~/.kube/config
-export GO_VESRION="1.13.4"
 
 download(){
     export KUBECTL_VER="$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
@@ -23,8 +22,8 @@ go_bootstrap() {
     # Install latest Go version
     sudo apt-get update
     sudo apt-get -y upgrade
-    wget https://dl.google.com/go/go${{ GO_VERSION }}.linux-amd64.tar.gz
-    sudo tar -xvf go${{ GO_VERSION }}.linux-amd64.tar.gz
+    wget https://dl.google.com/go/go1.13.4.linux-amd64.tar.gz
+    sudo tar -xvf go1.13.4.linux-amd64.tar.gz
     sudo mv go /usr/local
     cp -fr ./otus-platform-tests/homeworks/${HOMEWORK}/* ./
     go version
