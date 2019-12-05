@@ -18,6 +18,14 @@ download(){
     sudo install /tmp/kind /usr/local/bin/
 }
 
+go_bootstrap() {
+    # Install latest Go version
+    sudo add-apt-repository ppa:longsleep/golang-backports
+    sudo apt-get update
+    sudo apt-get install golang-go
+    ls -lah
+}
+
 prepare() {
     # Create kind cluster
     kind create cluster -q --wait 300s
@@ -26,7 +34,7 @@ prepare() {
 }
 
 run_mandatory_tests() {
-    cd mandatory-tests
+    cd ./mandatory-tests
     go test
 }
 
@@ -36,6 +44,7 @@ run_additional_tests() {
 
 echo "Downloading and bootstrapping dependencies..."
 download
+go_bootstrap
 echo "Preparing test cluster..."
 prepare
 echo "Running mandatory tests..."
