@@ -27,7 +27,7 @@ go_bootstrap() {
     export GOPATH=$HOME/
     export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
     go version
-    
+
     cp -fr ./otus-platform-tests/homeworks/${HOMEWORK}/* ./
 }
 
@@ -40,7 +40,6 @@ prepare() {
 
 run_mandatory_tests() {
     cd ./mandatory-tests
-    go mod tidy
     go test
 }
 
