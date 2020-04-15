@@ -13,13 +13,28 @@ sudo mv kind /usr/local/bin/
 
 # Create kind cluster
 kind create cluster --config kubernetes-storage/cluster/cluster.yaml --wait 300s
-export KUBECONFIG="$(kind get kubeconfig-path)"
+
+# Use default kind context
+kubectl config use-context kind-kind
+
+# This is deprecated now
+# export KUBECONFIG="$(kind get kubeconfig-path)"
+
+# Deploy snapshotter
+SNAPSHOTTER_VERSION=v2.0.1
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/${SNAPSHOTTER_VERSION}/config/crd/snapshot.storage.k8s.io_volumesnapshotclasses.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/${SNAPSHOTTER_VERSION}/config/crd/snapshot.storage.k8s.io_volumesnapshotcontents.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/${SNAPSHOTTER_VERSION}/config/crd/snapshot.storage.k8s.io_volumesnapshots.yaml
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/${SNAPSHOTTER_VERSION}/deploy/kubernetes/snapshot-controller/rbac-snapshot-controller.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/${SNAPSHOTTER_VERSION}/deploy/kubernetes/snapshot-controller/setup-snapshot-controller.yaml
 
 # Clone CSI driver host path repo
-git clone https://github.com/kubernetes-csi/csi-driver-host-path.git
+git clone --branch v1.3.0 https://github.com/kubernetes-csi/csi-driver-host-path.git
 
 # Okay, lets install it
-csi-driver-host-path/deploy/kubernetes-1.17/deploy-hostpath.sh
+csi-driver-host-path/deploy/kubernetes-1.17/deploy.sh
 
 # create infrastructure
 kubectl apply -f kubernetes-storage/hw && sleep 10
