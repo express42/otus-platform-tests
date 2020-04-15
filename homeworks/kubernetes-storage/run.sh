@@ -7,7 +7,7 @@ chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 
 # Download kind
-curl -Lo kind https://github.com/kubernetes-sigs/kind/releases/download/v0.4.0/kind-linux-amd64
+curl -Lo kind https://github.com/kubernetes-sigs/kind/releases/download/v0.7.0/kind-linux-amd64
 chmod +x kind 
 sudo mv kind /usr/local/bin/
 
@@ -19,7 +19,7 @@ export KUBECONFIG="$(kind get kubeconfig-path)"
 git clone https://github.com/kubernetes-csi/csi-driver-host-path.git
 
 # Okay, lets install it
-csi-driver-host-path/deploy/kubernetes-1.15/deploy-hostpath.sh
+csi-driver-host-path/deploy/kubernetes-1.17/deploy-hostpath.sh
 
 # create infrastructure
 kubectl apply -f kubernetes-storage/hw && sleep 10
@@ -40,7 +40,7 @@ MD5FIRST=$(kubectl exec storage-pod -- /bin/bash -c "md5sum /data/item | cut -f 
 
 # let we do a snap now
 cat <<EOF | kubectl apply -f -
-apiVersion: snapshot.storage.k8s.io/v1alpha1
+apiVersion: snapshot.storage.k8s.io/v1beta1
 kind: VolumeSnapshot
 metadata:
   name: storage-snapshot
