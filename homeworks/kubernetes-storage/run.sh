@@ -60,10 +60,9 @@ kind: VolumeSnapshot
 metadata:
   name: storage-snapshot
 spec:
-  snapshotClassName: csi-hostpath-snapclass
+  volumeSnapshotClassName: csi-hostpath-snapclass
   source:
-    name: storage-pvc
-    kind: PersistentVolumeClaim
+    persistentVolumeClaimName: hpvc
 EOF
 
 # do a stupid backup of pod
