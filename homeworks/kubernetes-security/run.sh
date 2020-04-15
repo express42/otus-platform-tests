@@ -2,13 +2,13 @@
 set -xe
 
 # Download kubectl
-curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl 
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 
 # Download kind
 curl -Lo kind https://github.com/kubernetes-sigs/kind/releases/download/v0.4.0/kind-linux-amd64
-chmod +x kind 
+chmod +x kind
 sudo mv kind /usr/local/bin/
 
 # Create kind cluster
@@ -20,8 +20,11 @@ export KUBECONFIG="$(kind get kubeconfig-path)"
 # task01
 kubectl apply -f kubernetes-security/task01/ && sleep 10
 
-# bob should have access to deployments
+# bob should have access to deployments in current(default) namespace
 kubectl auth can-i get deployments --as system:serviceaccount:default:bob || exit 1
+
+# bob should have access to deployments in kube-system namespace
+kubectl auth can-i get deployments --as system:serviceaccount:default:bob --all-namespaces=true || exit 1
 
 # dave should not have access to cluster
 kubectl auth can-i get pods --as system:serviceaccount:default:dave && exit 1
@@ -89,6 +92,6 @@ kubectl auth can-i create deployments --as system:serviceaccount:dev:ken -n dev 
 exit 0
 
 # Manual approve
-# echo "All tests passed. Proceed with manual approve" 
+# echo "All tests passed. Proceed with manual approve"
 # exit 1
 
