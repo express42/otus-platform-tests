@@ -106,7 +106,7 @@ fi
 
 exit 0
 
-# Manual approve
-# echo "All tests passed. Proceed with manual approve" 
+# Manual approval
+# echo "All tests passed. Proceed with manual approval" 
 # exit 1
 

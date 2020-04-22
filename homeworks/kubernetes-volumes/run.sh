@@ -30,6 +30,6 @@ sleep 10
 # Connect to Minio and upload file
 kubectl run -i --tty --rm debug --image=otusplatform/test-minio --restart=Never
 
-# Manual approve
-# echo "All tests passed. Proceed with manual approve" 
+# Manual approval
+# echo "All tests passed. Proceed with manual approval" 
 # exit 1

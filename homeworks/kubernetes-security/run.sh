@@ -91,7 +91,7 @@ kubectl auth can-i create deployments --as system:serviceaccount:dev:ken -n dev 
 
 exit 0
 
-# Manual approve
-# echo "All tests passed. Proceed with manual approve"
+# Manual approval
+# echo "All tests passed. Proceed with manual approval"
 # exit 1
 

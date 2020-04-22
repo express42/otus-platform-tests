@@ -50,8 +50,8 @@ run_tests() {
 }
 
 finalize() {
-    # Manual approve
-    echo "All tests passed. Proceed with manual approve"
+    # Manual approval
+    echo "All tests passed. Proceed with manual approval"
     exit 1
 }
 
