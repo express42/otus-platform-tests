@@ -13,7 +13,7 @@ def web_pod(kube_module) -> kubetest.objects.Pod:
 
     pods = kube_module.get_pods()
     p = pods.get("web")
-    p.wait_until_ready(timeout=60)
+    p.wait_until_ready(timeout=120)
     yield p
     p.delete(options=None)
     p.wait_until_deleted()
