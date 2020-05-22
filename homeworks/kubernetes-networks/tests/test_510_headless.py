@@ -50,12 +50,16 @@ def web_ingress_rules(request, kube_module):
 
     # Below goes an unsuccessful try on getting backend state. But it doesn't work
     # unfortunately.
-    nginx_pods = kube_module.get_pods(
-        namespace="ingress-nginx",
-        labels={"app.kubernetes.io/name": "ingress-nginx"})
+    nginx_pods = kube_module.get_pods(namespace="ingress-nginx",
+                                      labels={
+                                          "app.kubernetes.io/name":
+                                          "ingress-nginx",
+                                          "app.kubernetes.io/component":
+                                          "controller"
+                                      })
 
     for pod in nginx_pods.values():
-        container = pod.get_container(name="nginx-ingress-controller")
+        container = pod.get_container(name="controller")
         count: int = 0
         while count < 3 and not container.search_logs(log_pattern):
             LOG.error(container.get_logs())
