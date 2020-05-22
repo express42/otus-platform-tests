@@ -37,7 +37,7 @@ pytest_bootstrap() {
 prepare() {
     # Create kind cluster
     kind create cluster --wait 300s
-    export KUBECONFIG="$(kind get kubeconfig-path)"
+    kubectl config set-context kind-kind
     # Wait while all components in kube-system namespace will start
     kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
     kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
