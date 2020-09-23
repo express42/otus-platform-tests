@@ -84,7 +84,7 @@ def test_nginx_namespace_exists(kube):
 
 @pytest.mark.it("Check Nginx LoadBalancer-service config and ready state")
 def test_nginx_service_lb(nginx_svc_lb):
-    nginx_svc_lb.wait_until_ready(timeout=120)
+    nginx_svc_lb.wait_until_ready(timeout=300)
     assert (nginx_svc_lb.is_ready() is
             True), "Nginx LB Service is not ready (endpoints failing)"
 
