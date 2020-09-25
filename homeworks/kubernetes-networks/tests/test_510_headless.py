@@ -80,23 +80,24 @@ def test_nginx_namespace_exists(kube):
     kube.wait_until_created(ns, timeout=30)
     assert ns.is_ready() is True, 'Namespace "{}" doesn\'t exist'.format(
         ns.name)
+
+
+@pytest.mark.it("Check Nginx LoadBalancer-service config and ready state")
+def test_nginx_service_lb(nginx_svc_lb):
+    nginx_svc_lb
+    sleep(120)
     subprocess.check_call(
                 ["kubectl", "get", "all", "-A"])
+    assert (nginx_svc_lb.is_ready() is
+            True), "Nginx LB Service is not ready (endpoints failing)"
 
-
-# @pytest.mark.it("Check Nginx LoadBalancer-service config and ready state")
-# def test_nginx_service_lb(nginx_svc_lb):
-#     nginx_svc_lb.wait_until_ready(timeout=120)
-#     assert (nginx_svc_lb.is_ready() is
-#             True), "Nginx LB Service is not ready (endpoints failing)"
-
-#     spec = nginx_svc_lb.obj.spec
-#     assert (spec.type == "LoadBalancer"
-#             ), "Service type is not LoadBalancer - detected type is {}".format(
-#                 spec.type)
-#     assert (spec.ports[0].port == 80
-#             ), "Service port is not 80 (detected port is {})".format(
-#                 spec.ports[0].port)
+    spec = nginx_svc_lb.obj.spec
+    assert (spec.type == "LoadBalancer"
+            ), "Service type is not LoadBalancer - detected type is {}".format(
+                spec.type)
+    assert (spec.ports[0].port == 80
+            ), "Service port is not 80 (detected port is {})".format(
+                spec.ports[0].port)
 
 
 @pytest.mark.it("Check Nginx LoadBalancer ingress IP address")
