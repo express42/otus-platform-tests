@@ -47,8 +47,7 @@ prepare() {
 }
 
 run_tests() {
-    pytest --color=yes --kube-config="${KUBECONFIG}" --maxfail=10 tests/
-    kubectl get all -A
+    pytest --color=yes --kube-config="${KUBECONFIG}" tests/
 }
 
 finalize() {
