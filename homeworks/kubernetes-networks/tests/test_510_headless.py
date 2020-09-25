@@ -80,6 +80,8 @@ def test_nginx_namespace_exists(kube):
     kube.wait_until_created(ns, timeout=30)
     assert ns.is_ready() is True, 'Namespace "{}" doesn\'t exist'.format(
         ns.name)
+    subprocess.check_call(
+                ["kubectl", "get", "all", "-A"])
 
 
 # @pytest.mark.it("Check Nginx LoadBalancer-service config and ready state")
