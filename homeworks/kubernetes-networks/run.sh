@@ -43,7 +43,7 @@ prepare() {
     kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
     kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
     curl -L -o ./manifests/metallb.yaml https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
-    curl -L -o ./manifests/ingress-nginx.yaml https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud/deploy.yaml
+    curl -L -o ./manifests/ingress-nginx.yaml https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-0.32.0/deploy/static/provider/cloud/deploy.yaml
 }
 
 run_tests() {
