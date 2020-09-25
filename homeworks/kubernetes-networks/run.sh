@@ -48,6 +48,7 @@ prepare() {
 
 run_tests() {
     pytest --color=yes --kube-config="${KUBECONFIG}" tests/
+    kubectl get all -A
 }
 
 finalize() {
