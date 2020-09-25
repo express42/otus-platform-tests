@@ -82,19 +82,19 @@ def test_nginx_namespace_exists(kube):
         ns.name)
 
 
-@pytest.mark.it("Check Nginx LoadBalancer-service config and ready state")
-def test_nginx_service_lb(nginx_svc_lb):
-    nginx_svc_lb.wait_until_ready(timeout=120)
-    assert (nginx_svc_lb.is_ready() is
-            True), "Nginx LB Service is not ready (endpoints failing)"
+# @pytest.mark.it("Check Nginx LoadBalancer-service config and ready state")
+# def test_nginx_service_lb(nginx_svc_lb):
+#     nginx_svc_lb.wait_until_ready(timeout=120)
+#     assert (nginx_svc_lb.is_ready() is
+#             True), "Nginx LB Service is not ready (endpoints failing)"
 
-    spec = nginx_svc_lb.obj.spec
-    assert (spec.type == "LoadBalancer"
-            ), "Service type is not LoadBalancer - detected type is {}".format(
-                spec.type)
-    assert (spec.ports[0].port == 80
-            ), "Service port is not 80 (detected port is {})".format(
-                spec.ports[0].port)
+#     spec = nginx_svc_lb.obj.spec
+#     assert (spec.type == "LoadBalancer"
+#             ), "Service type is not LoadBalancer - detected type is {}".format(
+#                 spec.type)
+#     assert (spec.ports[0].port == 80
+#             ), "Service port is not 80 (detected port is {})".format(
+#                 spec.ports[0].port)
 
 
 @pytest.mark.it("Check Nginx LoadBalancer ingress IP address")
@@ -140,33 +140,33 @@ def test_headless_service_endpoints(web_service_headless):
     assert len(ep[0].subsets[0].addresses) == 3
 
 
-@pytest.mark.it("Connect to headless service via Ingress-Nginx")
-@pytest.mark.usefixtures("web_ingress_rules")
-def test_ingress_external_connection(nginx_svc_lb, test_container):
-    svc: kubetest.objects.Service = nginx_svc_lb
-    results: Set[str] = set()
-    pattern = "HOSTNAME"
+# @pytest.mark.it("Connect to headless service via Ingress-Nginx")
+# @pytest.mark.usefixtures("web_ingress_rules")
+# def test_ingress_external_connection(nginx_svc_lb, test_container):
+#     svc: kubetest.objects.Service = nginx_svc_lb
+#     results: Set[str] = set()
+#     pattern = "HOSTNAME"
 
-    ip: str = svc.obj.status.load_balancer.ingress[0].ip
-    assert ip is not None, "No IP address assigned for LoadBalancer service"
+#     ip: str = svc.obj.status.load_balancer.ingress[0].ip
+#     assert ip is not None, "No IP address assigned for LoadBalancer service"
 
-    url: str = "http://{}:{}/web/index.html".format(ip, "80")
+#     url: str = "http://{}:{}/web/index.html".format(ip, "80")
 
-    test_container.run("apk --no-cache -q add curl")
-    assert (test_container.package("curl").is_installed is
-            True), "Curl installation failed"
+#     test_container.run("apk --no-cache -q add curl")
+#     assert (test_container.package("curl").is_installed is
+#             True), "Curl installation failed"
 
-    for test in range(5):
-        out: str = test_container.check_output(
-            "curl --connect-timeout 10 -kL -sS {}".format(url))
-        # Splits output by lines, then adds matching lines to resulting set
-        results.update([l for l in out.splitlines() if pattern in l])
-        assert (
-            results
-        ), "Pattern '{}' was not found in Pod's response\nOutput was:\n{}".format(
-            pattern, out)
+#     for test in range(5):
+#         out: str = test_container.check_output(
+#             "curl --connect-timeout 10 -kL -sS {}".format(url))
+#         # Splits output by lines, then adds matching lines to resulting set
+#         results.update([l for l in out.splitlines() if pattern in l])
+#         assert (
+#             results
+#         ), "Pattern '{}' was not found in Pod's response\nOutput was:\n{}".format(
+#             pattern, out)
 
-    assert (
-        len(results) > 1
-    ), "Got the same value for {} in 5 responses. Check balancing or page contents:\n{}".format(
-        pattern, results)
+#     assert (
+#         len(results) > 1
+#     ), "Got the same value for {} in 5 responses. Check balancing or page contents:\n{}".format(
+#         pattern, results)
