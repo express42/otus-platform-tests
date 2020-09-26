@@ -88,6 +88,8 @@ def test_nginx_service_lb(nginx_svc_lb):
     sleep(120)
     subprocess.check_call(
                 ["kubectl", "get", "all", "-A"])
+    subprocess.check_call(
+                ["kubectl", "get", "endpoints", "-A"])
     # assert (nginx_svc_lb.is_ready() is
     #         True), "Nginx LB Service is not ready (endpoints failing)"
 
