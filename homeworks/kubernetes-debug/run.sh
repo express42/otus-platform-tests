@@ -2,5 +2,5 @@
 set -xe
 
 # Manual approval
-echo "All tests passed. Proceed with manual approval"
+echo "All tests passed (Because we don't have any tests yet). Proceed with manual approve"
 exit 1
