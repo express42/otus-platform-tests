@@ -52,7 +52,7 @@ run_tests() {
 
 finalize() {
     # Manual approval
-    echo "All tests passed. Proceed with manual approval"
+    echo "All tests passed. Proceed with manual approval by OTUS teacher (wait for PR to be reviewed)."
     exit 1
 }
 
