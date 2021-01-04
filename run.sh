@@ -1,6 +1,6 @@
 #!/bin/bash
 GROUP=github-actions
-BRANCH=$GITHUB_REF
+BRANCH=$GITHUB_HEAD_REF
 HOMEWORK_RUN=./otus-platform-tests/homeworks/$BRANCH/run.sh
 REPO=https://github.com/express42/otus-platform-tests.git
 DOCKER_IMAGE=express42/otus-homeworks
@@ -12,6 +12,8 @@ if [ "$BRANCH" == "" ]; then
 	echo "We don't have tests for master branch"
 	exit 0
 fi
+
+ls -lahtr
 
 if [ -f $HOMEWORK_RUN ]; then
 	echo "Run tests"
