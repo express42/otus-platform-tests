@@ -13,9 +13,6 @@ if [ "$BRANCH" == "" ]; then
 	exit 0
 fi
 
-echo "Clone repository with tests"
-git clone -b $GROUP --single-branch $REPO -v
-
 if [ -f $HOMEWORK_RUN ]; then
 	echo "Run tests"
 	/bin/bash $HOMEWORK_RUN
