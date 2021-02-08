@@ -34,7 +34,6 @@ sudo mv kind /usr/local/bin/
 # Create kind cluster
 kind create cluster --wait 300s
 kubectl version
-export KUBECONFIG="$(kind get kubeconfig-path)"
 
 # Wait while all components in kube-system namespace will start
 kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
