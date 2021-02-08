@@ -47,7 +47,8 @@ kubectl apply -f kubernetes-operators/deploy/role-binding.yml
 kubectl apply -f kubernetes-operators/deploy/deploy-operator.yml
 kubectl apply -f kubernetes-operators/deploy/cr.yml
 
-
+kubectl get pods
+kubectl describe po
 kubectl wait --for=condition=Available deployment/mysql-operator --timeout=300s
 sleep 10
 export MYSQLPOD="$(kubectl get pods -l app=mysql-instance -o jsonpath="{.items[*].metadata.name}")"
