@@ -40,13 +40,7 @@ kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
 
 # Deploy operator
 
-kubectl apply -f kubernetes-operators/deploy/crd.yml
-kubectl apply -f kubernetes-operators/deploy/service-account.yml
-kubectl apply -f kubernetes-operators/deploy/role.yml
-kubectl apply -f kubernetes-operators/deploy/role-binding.yml
-kubectl apply -f kubernetes-operators/deploy/deploy-operator.yml
-kubectl apply -f kubernetes-operators/deploy/cr.yml
-
+kubectl apply -f kubernetes-operators/deploy
 
 kubectl wait --for=condition=Available deployment/mysql-operator --timeout=300s
 sleep 10
