@@ -49,9 +49,9 @@ kubectl get pvc storage-pvc > /dev/null || exit 1
 kubectl describe pod storage-pod | grep storage-pvc > /dev/null || exit 1
 
 # store super important data
-kubectl exec storage-pod -- /bin/bash -c "echo kek lol i am eagle > /data/item" || exit 1
+kubectl exec storage-pod -- /bin/sh -c "echo kek lol i am eagle > /data/item" || exit 1
 
-MD5FIRST=$(kubectl exec storage-pod -- /bin/bash -c "md5sum /data/item | cut -f 1 -d \" \"")
+MD5FIRST=$(kubectl exec storage-pod -- /bin/sh -c "md5sum /data/item | cut -f 1 -d \" \"")
 
 # let we do a snap now
 cat <<EOF | kubectl apply -f -
