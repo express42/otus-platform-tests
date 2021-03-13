@@ -73,7 +73,7 @@ kubectl delete pod storage-pod
 kubectl delete pvc storage-pvc
 
 # okay, time for black magic!
-kubectl apply -f pvc.yaml
+kubectl apply -f ./otus-platform-tests/homeworks/kubernetes-storage/pvc.yaml
 
 # rise and shine
 kubectl apply -f backup.yml || exit 1
