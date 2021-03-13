@@ -73,23 +73,7 @@ kubectl delete pod storage-pod
 kubectl delete pvc storage-pvc
 
 # okay, time for black magic!
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: storage-pvc
-spec:
-  storageClassName: csi-hostpath-sc
-  dataSource:
-    name: storage-snapshot
-    kind: VolumeSnapshot
-    apiGroup: snapshot.storage.k8s.io
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-EOF
+kubectl apply -f pvc.yaml
 
 # rise and shine
 kubectl apply -f backup.yml || exit 1
