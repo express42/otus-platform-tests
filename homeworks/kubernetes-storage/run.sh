@@ -12,7 +12,7 @@ chmod +x kind
 sudo mv kind /usr/local/bin/
 
 # Create kind cluster
-kind create cluster --config kubernetes-storage/cluster/cluster.yaml --wait 300s
+kind create cluster --config ./otus-platform-tests/homeworks/kubernetes-storage/cluster.yaml --wait 300s
 
 # Use default kind context
 kubectl config use-context kind-kind
