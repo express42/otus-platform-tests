@@ -39,7 +39,7 @@ export KUBECONFIG="$(kind get kubeconfig-path)"
 kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
 
 # Deploy operator
-
+kubectl apply -f kubernetes-operators/deploy/crd.yml
 kubectl apply -f kubernetes-operators/deploy
 
 kubectl wait --for=condition=Available deployment/mysql-operator --timeout=300s
