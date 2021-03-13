@@ -98,7 +98,7 @@ kubectl apply -f backup.yml || exit 1
 kubectl wait --for=condition=Ready pod storage-pod -n default --timeout=300s
 
 # get it again
-MD5SECOND=$(kubectl exec storage-pod -- /bin/bash -c "md5sum /data/item | cut -f 1 -d \" \"")
+MD5SECOND=$(kubectl exec storage-pod -- /bin/sh -c "md5sum /data/item | cut -f 1 -d \" \"")
 
 if [ $MD5FIRST != $MD5SECOND ]; then
   echo "Whooops! Snaphot data not equals original v_v"; exit 1;
