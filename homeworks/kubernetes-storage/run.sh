@@ -69,8 +69,8 @@ EOF
 kubectl get pod storage-pod -o yaml --export > backup.yml || exit 1
 
 # now we will delete everything
-kubectl delete pod storage-pod || exit 1
-kubectl delete pvc storage-pvc || exit 1
+kubectl delete pod storage-pod
+kubectl delete pvc storage-pvc
 
 # okay, time for black magic!
 cat <<EOF | kubectl apply -f -
