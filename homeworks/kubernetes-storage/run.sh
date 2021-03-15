@@ -69,6 +69,7 @@ EOF
 kubectl get pod storage-pod -o yaml --export > backup.yml || exit 1
 
 # now we will delete everything
+kubectl patch pvc storage-pvc -p '{"metadata":{"finalizers": []}}' --type=merge
 kubectl delete pod storage-pod
 kubectl delete pvc storage-pvc
 
