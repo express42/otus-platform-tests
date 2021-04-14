@@ -9,11 +9,11 @@ def frontend_pod(kube_module) -> kubetest.objects.Pod:
     time.sleep(10)
     pod = kube_module.load_pod("./kubernetes-intro/frontend-pod-healthy.yaml")
     pod.create()
-    kube_module.wait_until_created(pod, timeout=10)
+    kube_module.wait_until_created(pod, timeout=20)
 
     pods = kube_module.get_pods()
     p = pods.get("frontend")
-    p.wait_until_containers_start(timeout=90)
+    p.wait_until_containers_start(timeout=120)
     yield p
     p.delete(options=None)
     p.wait_until_deleted()
