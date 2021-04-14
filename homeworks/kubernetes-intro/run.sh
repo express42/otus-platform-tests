@@ -7,7 +7,7 @@ export KUBECONFIG=~/.kube/config
 
 download(){
     export KUBECTL_VER="$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
-    export KIND_VER="v0.6.0"
+    export KIND_VER="v0.10.0"
 
     # Download kubectl
     curl -L -o /tmp/kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VER}/bin/linux/amd64/kubectl
