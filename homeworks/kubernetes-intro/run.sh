@@ -38,9 +38,9 @@ pytest_bootstrap() {
 
 prepare() {
     # Create kind cluster
-    kind create cluster -q --wait 300s
+    kind create cluster -q --wait 600s
     # Wait while all components in kube-system namespace will start
-    kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
+    kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=600s
 }
 
 run_mandatory_tests() {
