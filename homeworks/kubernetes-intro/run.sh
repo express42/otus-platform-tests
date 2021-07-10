@@ -7,7 +7,7 @@ export KUBECONFIG=~/.kube/config
 
 download(){
     export KUBECTL_VER="$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
-    export KIND_VER="v0.10.0"
+    export KIND_VER="v0.11.1"
 
     # Download kubectl
     curl -L -o /tmp/kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VER}/bin/linux/amd64/kubectl
@@ -38,9 +38,9 @@ pytest_bootstrap() {
 
 prepare() {
     # Create kind cluster
-    kind create cluster -q --wait 600s --loglevel debug
+    kind create cluster -q --wait 300s
     # Wait while all components in kube-system namespace will start
-    kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=600s
+    kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
 }
 
 run_mandatory_tests() {
