@@ -40,6 +40,9 @@ prepare() {
 
 run_mandatory_tests() {
     cd ./mandatory-tests
+    echo "----"
+    grep -Rn paymentservice .
+    echo "----"
     go test
 }
 
