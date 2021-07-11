@@ -2,7 +2,7 @@
 GROUP=2021-06
 BRANCH=${GITHUB_REF##*/}
 HOMEWORK_RUN=./otus-platform-tests/homeworks/$BRANCH/run.sh
-REPO=https://github.com/express42/otus-platform-tests.git
+REPO=https://github.com/AndreyRomanchev/otus-platform-tests.git
 DOCKER_IMAGE=express42/otus-homeworks
 
 echo GROUP:$GROUP
