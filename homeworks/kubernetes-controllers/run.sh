@@ -20,7 +20,7 @@ download(){
 
 go_bootstrap() {
     # Install latest Go version
-    wget https://dl.google.com/go/go1.13.4.linux-amd64.tar.gz
+    wget -q https://dl.google.com/go/go1.13.4.linux-amd64.tar.gz
     sudo tar -xf go1.13.4.linux-amd64.tar.gz
     sudo mv go /usr/local
     export GOROOT=/usr/local/go

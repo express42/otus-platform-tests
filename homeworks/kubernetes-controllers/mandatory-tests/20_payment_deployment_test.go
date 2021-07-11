@@ -26,7 +26,7 @@ func TestKubernetesPaymentDeployment(t *testing.T) {
 
 	options := k8s.NewKubectlOptions("", "", namespaceName)
 	filters := metav1.ListOptions{
-		LabelSelector: "app=paymentservice",
+		LabelSelector: "app=payment",
 	}
 
 	k8s.CreateNamespace(t, options, namespaceName)
