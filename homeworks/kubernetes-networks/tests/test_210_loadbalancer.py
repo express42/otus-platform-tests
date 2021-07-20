@@ -55,8 +55,8 @@ def test_lb_service_ingress(web_service_lb):
     assert lb_ingress[
         0].ip is not None, "LoadBalancer ingress IP is not defined"
     assert (
-        ip_address(lb_ingress[0].ip) in ip_network("172.17.255.0/24").hosts()
-    ), "Assigned LB ingress IP ({})is not from 172.17.255.0/24 range".format(
+        ip_address(lb_ingress[0].ip) in ip_network("172.18.255.0/24").hosts()
+    ), "Assigned LB ingress IP ({})is not from 172.18.255.0/24 range".format(
         lb_ingress[0].ip)
 
 

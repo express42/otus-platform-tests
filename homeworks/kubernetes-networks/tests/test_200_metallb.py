@@ -5,7 +5,7 @@ import yaml
 import logging
 
 LOG = logging.getLogger(__name__)
-POOL = "172.17.255.1-172.17.255.255"
+POOL = "172.18.255.1-172.18.255.255"
 
 
 @pytest.fixture(scope="module")
