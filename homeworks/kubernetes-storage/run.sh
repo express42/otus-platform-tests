@@ -7,7 +7,7 @@ chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 
 # Download kind
-curl -Lo kind https://github.com/kubernetes-sigs/kind/releases/download/v0.7.0/kind-linux-amd64
+curl -Lo kind https://github.com/kubernetes-sigs/kind/releases/download/v0.11.1/kind-linux-amd64
 chmod +x kind 
 sudo mv kind /usr/local/bin/
 
@@ -21,20 +21,20 @@ kubectl config use-context kind-kind
 # export KUBECONFIG="$(kind get kubeconfig-path)"
 
 # Deploy snapshotter
-SNAPSHOTTER_VERSION=v2.0.1
+SNAPSHOTTER_VERSION=release-4.1
 
-kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/${SNAPSHOTTER_VERSION}/config/crd/snapshot.storage.k8s.io_volumesnapshotclasses.yaml
-kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/${SNAPSHOTTER_VERSION}/config/crd/snapshot.storage.k8s.io_volumesnapshotcontents.yaml
-kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/${SNAPSHOTTER_VERSION}/config/crd/snapshot.storage.k8s.io_volumesnapshots.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/${SNAPSHOTTER_VERSION}/client/config/crd/snapshot.storage.k8s.io_volumesnapshotclasses.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/${SNAPSHOTTER_VERSION}/client/config/crd/snapshot.storage.k8s.io_volumesnapshotcontents.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/${SNAPSHOTTER_VERSION}/client/config/crd/snapshot.storage.k8s.io_volumesnapshots.yaml
 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/${SNAPSHOTTER_VERSION}/deploy/kubernetes/snapshot-controller/rbac-snapshot-controller.yaml
 kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/${SNAPSHOTTER_VERSION}/deploy/kubernetes/snapshot-controller/setup-snapshot-controller.yaml
 
 # Clone CSI driver host path repo
-git clone --branch v1.3.0 https://github.com/kubernetes-csi/csi-driver-host-path.git
+git clone https://github.com/kubernetes-csi/csi-driver-host-path
 
 # Okay, lets install it
-csi-driver-host-path/deploy/kubernetes-1.17/deploy.sh
+csi-driver-host-path/deploy/kubernetes-1.21/deploy.sh
 
 # create infrastructure
 kubectl apply -f kubernetes-storage/hw && sleep 10
@@ -55,7 +55,7 @@ MD5FIRST=$(kubectl exec storage-pod -- /bin/sh -c "md5sum /data/item | cut -f 1 
 
 # let we do a snap now
 cat <<EOF | kubectl apply -f -
-apiVersion: snapshot.storage.k8s.io/v1beta1
+apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshot
 metadata:
   name: storage-snapshot
@@ -66,7 +66,7 @@ spec:
 EOF
 
 # do a stupid backup of pod
-kubectl get pod storage-pod -o yaml --export > backup.yml || exit 1
+kubectl get pod storage-pod -o yaml > backup.yml || exit 1
 
 # now we will delete everything
 kubectl patch pvc storage-pvc -p '{"metadata":{"finalizers": []}}' --type=merge
@@ -94,4 +94,3 @@ exit 0
 # Manual approval
 # echo "All tests passed. Proceed with manual approval" 
 # exit 1
-
