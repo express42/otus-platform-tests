@@ -6,8 +6,8 @@ export HOMEWORK="kubernetes-intro"
 export KUBECONFIG=~/.kube/config
 
 download(){
-    export KUBECTL_VER="v1.21.3"
-    export KIND_VER="v0.11.1"
+    export KUBECTL_VER="v1.26.2"
+    export KIND_VER="v0.17.0"
 
     # Download kubectl
     curl -L -o /tmp/kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VER}/bin/linux/amd64/kubectl
