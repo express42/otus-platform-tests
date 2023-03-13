@@ -1,5 +1,5 @@
-pytest==5.0.1
+pytest==6.2.5
 pytest-testdox==1.1.1
 testinfra==3.0.6
 git+https://github.com/virtualshuric/kubetest.git@0.3.2-e42-hacks2#egg=kubetest
-kubernetes==17.17.0
+kubernetes==26.1.0
