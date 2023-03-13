@@ -1,4 +1,4 @@
-pytest==6.2.5
+pytest==7.2.2
 pytest-testdox==1.1.1
 testinfra==3.0.6
 git+https://github.com/virtualshuric/kubetest.git@0.3.2-e42-hacks2#egg=kubetest
